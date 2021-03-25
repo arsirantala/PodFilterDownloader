@@ -48,6 +48,8 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.lblUpdateAvailable = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -55,6 +57,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.lblUpdateAvailable);
+            this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.lblAuthor);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.btnMoreInfoOnSelectedFilter);
@@ -71,10 +75,9 @@
             // 
             // lblAuthor
             // 
-            this.lblAuthor.AutoSize = true;
             this.lblAuthor.Location = new System.Drawing.Point(465, 74);
             this.lblAuthor.Name = "lblAuthor";
-            this.lblAuthor.Size = new System.Drawing.Size(0, 17);
+            this.lblAuthor.Size = new System.Drawing.Size(172, 17);
             this.lblAuthor.TabIndex = 7;
             // 
             // label2
@@ -180,13 +183,13 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemFileExit});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(44, 24);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(46, 24);
             this.toolStripMenuItem1.Text = "File";
             // 
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(108, 26);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(116, 26);
             this.toolStripMenuItemFileExit.Text = "Exit";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
@@ -195,13 +198,13 @@
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemHelpAbout});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(53, 24);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(55, 24);
             this.toolStripMenuItem2.Text = "Help";
             // 
             // toolStripMenuItemHelpAbout
             // 
             this.toolStripMenuItemHelpAbout.Name = "toolStripMenuItemHelpAbout";
-            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(134, 26);
+            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(142, 26);
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
@@ -210,6 +213,22 @@
             this.timer.Enabled = true;
             this.timer.Interval = 250;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // lblUpdateAvailable
+            // 
+            this.lblUpdateAvailable.Location = new System.Drawing.Point(465, 155);
+            this.lblUpdateAvailable.Name = "lblUpdateAvailable";
+            this.lblUpdateAvailable.Size = new System.Drawing.Size(172, 17);
+            this.lblUpdateAvailable.TabIndex = 9;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(461, 116);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(114, 17);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Update available";
             // 
             // frmMain
             // 
@@ -257,6 +276,8 @@
         private System.Windows.Forms.Label lblAuthor;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.Label lblUpdateAvailable;
+        private System.Windows.Forms.Label label4;
     }
 }
 

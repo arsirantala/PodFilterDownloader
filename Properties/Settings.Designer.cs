@@ -12,7 +12,7 @@ namespace PodFilterDownloader.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.9.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -20,104 +20,6 @@ namespace PodFilterDownloader.Properties {
         public static Settings Default {
             get {
                 return defaultInstance;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PoDInstallLocation {
-            get {
-                return ((string)(this["PoDInstallLocation"]));
-            }
-            set {
-                this["PoDInstallLocation"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Gold Goblin,Feather")]
-        public string AvailableFilters_names {
-            get {
-                return ((string)(this["AvailableFilters_names"]));
-            }
-            set {
-                this["AvailableFilters_names"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://raw.githubusercontent.com/Boxcar87/Greedygoblin/master/greedygoblin.filte" +
-            "r,https://raw.githubusercontent.com/BetweenWalls/Feather/master/item.filter")]
-        public string AvailableFilterUrls {
-            get {
-                return ((string)(this["AvailableFilterUrls"]));
-            }
-            set {
-                this["AvailableFilterUrls"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("https://github.com/Boxcar87/Greedygoblin/wiki/Hands-off-my-gold!,https://github.c" +
-            "om/BetweenWalls/Feather")]
-        public string AvailableFilterHomeUrls {
-            get {
-                return ((string)(this["AvailableFilterHomeUrls"]));
-            }
-            set {
-                this["AvailableFilterHomeUrls"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SelectedAvailableFilterIndex {
-            get {
-                return ((int)(this["SelectedAvailableFilterIndex"]));
-            }
-            set {
-                this["SelectedAvailableFilterIndex"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("BoxCar87,BetweenWalls")]
-        public string AvailableFilterAuthors {
-            get {
-                return ((string)(this["AvailableFilterAuthors"]));
-            }
-            set {
-                this["AvailableFilterAuthors"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string AvailableFilterEtags {
-            get {
-                return ((string)(this["AvailableFilterEtags"]));
-            }
-            set {
-                this["AvailableFilterEtags"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DownloadedFilterEtags {
-            get {
-                return ((string)(this["DownloadedFilterEtags"]));
-            }
-            set {
-                this["DownloadedFilterEtags"] = value;
             }
         }
     }
