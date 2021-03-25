@@ -15,8 +15,9 @@ namespace PodFilterDownloader
         private FileIniDataParser _parser = new FileIniDataParser();
         private IniData _data;
         private string _selectedFilter;
+        private string _configFile;
 
-        private string[] _availFilters = new string[0];
+        //private string[] _availFilters = new string[0];
         private string[] _availFiltersUrls = new string[0];
         private string[] _availFiltersHomeUrls = new string[0];
         private string[] _availFiltersAuthors = new string[0];
@@ -24,7 +25,7 @@ namespace PodFilterDownloader
         private List<string> _downloadedFilterEtags = new List<string>();
         private List<string> _availableFilterEtags = new List<string>();
 
-        public string[] AvailFilters { get => _availFilters; set => _availFilters = value; }
+        //public string[] AvailFilters { get => _availFilters; set => _availFilters = value; }
         public string[] AvailFiltersUrls { get => _availFiltersUrls; set => _availFiltersUrls = value; }
         public string[] AvailFiltersHomeUrls { get => _availFiltersHomeUrls; set => _availFiltersHomeUrls = value; }
         public string[] AvailFiltersAuthors { get => _availFiltersAuthors; set => _availFiltersAuthors = value; }
@@ -34,7 +35,7 @@ namespace PodFilterDownloader
 
         private void DownloadFilterFile(string url)
         {
-            /* if (Available_filter_etags[lbAvailableFilters.SelectedIndex] == downloaded_filter_etags[lbAvailableFilters.SelectedIndex])
+            /* if (_data[_selectedFilter].GetKeyData("downloaded_etag").Value != _data[_selectedFilter].GetKeyData("etag").Value)
             {
                 if (MessageBox.Show("The downloaded file is the same. Do you want to re download it?", "Info", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) != DialogResult.Yes)
                 {
@@ -54,12 +55,15 @@ namespace PodFilterDownloader
 
             if (File.Exists($"{Path.GetTempPath()}\\{lblAuthor.Text}_{_selectedFilter}_item.filter"))
             {
-                if (DownloadedFilterEtags[lbAvailableFilters.SelectedIndex] == AvailableFilterEtags[lbAvailableFilters.SelectedIndex])
+                if (_data[_selectedFilter].GetKeyData("downloaded_etag").Value != _data[_selectedFilter].GetKeyData("etag").Value)
                 {
                     // File in temp is the same as one in the server, so just copy the file to PoD filter directory
                     File.Copy($"{Path.GetTempPath()}\\{lblAuthor.Text}_{_selectedFilter}_item.filter",
                         $"{txtPodInstallationLoc.Text}\\filter\\item.filter", true);
-                    MessageBox.Show(@"Already downloaded filter file was copied to Pod filter directory, as it was the same as previously downloaded", @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        @"Already downloaded filter file was copied to Pod filter directory, as it was the same as previously downloaded.",
+                        @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                     btnDownloadSelectedFilter.Enabled = true;
                     btnBrowsePoDInstallLoc.Enabled = true;
                     return;
@@ -123,9 +127,8 @@ namespace PodFilterDownloader
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
-            txtPodInstallationLoc.Text = Properties.Settings.Default.PoDInstallLocation;
-            AvailFilters = Properties.Settings.Default.AvailableFilters_names.Split(',');
+            // txtPodInstallationLoc.Text = Properties.Settings.Default.PoDInstallLocation;
+            // AvailFilters = Properties.Settings.Default.AvailableFilters_names.Split(',');
             AvailFiltersUrls = Properties.Settings.Default.AvailableFilterUrls.Split(',');
             AvailFiltersHomeUrls = Properties.Settings.Default.AvailableFilterHomeUrls.Split(',');
             AvailFiltersAuthors = Properties.Settings.Default.AvailableFilterAuthors.Split(',');
@@ -136,19 +139,32 @@ namespace PodFilterDownloader
                 DownloadedFilterEtags.Add(tt);
             }
 
-            foreach (string str in AvailFilters)
-            {
-                lbAvailableFilters.Items.Add(str);
-            }
-
-            lbAvailableFilters.SelectedIndex = Properties.Settings.Default.SelectedAvailableFilterIndex;
+            //lbAvailableFilters.SelectedIndex = Properties.Settings.Default.SelectedAvailableFilterIndex;
             LastSelectedFilterIndx = lbAvailableFilters.SelectedIndex;
-            lblAuthor.Text = AvailFiltersAuthors[lbAvailableFilters.SelectedIndex];
 
-            var configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)
+            _configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)
                 , @"Configuration.ini");
 
-            _data = _parser.ReadFile(configFile);
+            _data = _parser.ReadFile(_configFile);
+
+            foreach (var section in _data.Sections)
+            {
+                lbAvailableFilters.Items.Add(section.SectionName);
+            }
+
+            lbAvailableFilters.SelectedIndex = int.Parse(_data.Global.GetKeyData("SelectedAvailableFilterIndex").Value);
+            _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
+
+            txtPodInstallationLoc.Text = _data.Global.GetKeyData("PodInstallLocation").Value;
+            if (lbAvailableFilters.SelectedIndex != -1)
+            {
+                lblAuthor.Text = _data[_selectedFilter].GetKeyData("author").Value; // AvailFiltersAuthors[lbAvailableFilters.SelectedIndex];
+            }
+
+            //foreach (string str in AvailFilters)
+            //{
+            //    lbAvailableFilters.Items.Add(str);
+            //}
 
             //string useFullScreenStr = data["UI"]["fullscreen"];
 
@@ -158,8 +174,19 @@ namespace PodFilterDownloader
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Properties.Settings.Default["PodInstallLocation"] = txtPodInstallationLoc.Text;
-            Properties.Settings.Default["SelectedAvailableFilterIndex"] = lbAvailableFilters.SelectedIndex;
+            //Properties.Settings.Default["PodInstallLocation"] = txtPodInstallationLoc.Text;
+            //Properties.Settings.Default["SelectedAvailableFilterIndex"] = lbAvailableFilters.SelectedIndex;
+            KeyData test = _data.Global.GetKeyData("PodInstallLocation");
+            test.Value = txtPodInstallationLoc.Text;
+            _data.Global.SetKeyData(test);
+            test = _data.Global.GetKeyData("SelectedAvailableFilterIndex");
+
+            LastSelectedFilterIndx = lbAvailableFilters.SelectedIndex;
+            test.Value = LastSelectedFilterIndx.ToString();
+            _data.Global.SetKeyData(test);
+
+            _parser.WriteFile(_configFile, _data);
+
             Properties.Settings.Default["DownloadedFilterEtags"] = string.Join(",", _downloadedFilterEtags.ToArray());
             Properties.Settings.Default.Save();
         }
@@ -174,7 +201,7 @@ namespace PodFilterDownloader
         private void btnDownloadSelectedFilter_Click(object sender, EventArgs e)
         {
             btnDownloadSelectedFilter.Enabled = false;
-            DownloadFilterFile(AvailFiltersUrls[lbAvailableFilters.SelectedIndex]);
+            DownloadFilterFile(/*AvailFiltersUrls[lbAvailableFilters.SelectedIndex*/ _data[_selectedFilter].GetKeyData("download_url").Value);
         }
 
         private void btnMoreInfoOnSelectedFilter_Click(object sender, EventArgs e)
@@ -191,7 +218,7 @@ namespace PodFilterDownloader
         private void lbAvailableFilters_SelectedIndexChanged(object sender, EventArgs e)
         {
             _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
-            lblAuthor.Text = AvailFiltersAuthors[lbAvailableFilters.SelectedIndex];
+            lblAuthor.Text = _data[_selectedFilter].GetKeyData("author").Value; // AvailFiltersAuthors[lbAvailableFilters.SelectedIndex];
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -200,23 +227,30 @@ namespace PodFilterDownloader
 
             timer.Enabled = false;
 
-            Boolean first = true;
-            foreach(string filter in AvailFiltersUrls)
+            //Boolean first = true;
+
+            foreach (var filter in _data.Sections)
             {
-                WebRequest webRequest = WebRequest.Create(filter);
+                var url = _data[filter.SectionName].GetKeyData("download_url").Value;
+                WebRequest webRequest = WebRequest.Create(url);
                 webRequest.Method = "HEAD";
 
                 using (WebResponse webResponse = webRequest.GetResponse())
                 {
-                    if (first)
-                    {
-                        Properties.Settings.Default["AvailableFilterEtags"] = webResponse.Headers["ETag"];
-                        first = false;
-                    }
-                    else
-                    {
-                        Properties.Settings.Default["AvailableFilterEtags"] = "," + webResponse.Headers["ETag"];
-                    }
+                    KeyData test = _data[filter.SectionName].GetKeyData("etag");
+                    test.Value = webResponse.Headers["ETag"];
+                    _data[filter.SectionName].SetKeyData(test);
+                    _parser.WriteFile(_configFile, _data);
+
+                    //if (first)
+                    //{
+                    //    Properties.Settings.Default["AvailableFilterEtags"] = webResponse.Headers["ETag"];
+                    //    first = false;
+                    //}
+                    //else
+                    //{
+                    //    Properties.Settings.Default["AvailableFilterEtags"] = "," + webResponse.Headers["ETag"];
+                    //}
                     AvailableFilterEtags.Add(webResponse.Headers["ETag"]);
                 }
             }
