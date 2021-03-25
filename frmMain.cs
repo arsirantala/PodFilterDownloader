@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using IniParser;
 using IniParser.Model;
 
@@ -144,7 +145,10 @@ namespace PodFilterDownloader
             LastSelectedFilterIndx = lbAvailableFilters.SelectedIndex;
             lblAuthor.Text = AvailFiltersAuthors[lbAvailableFilters.SelectedIndex];
 
-            _data = _parser.ReadFile("Configuration.ini");
+            var configFile = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location)
+                , @"Configuration.ini");
+
+            _data = _parser.ReadFile(configFile);
 
             //string useFullScreenStr = data["UI"]["fullscreen"];
 
