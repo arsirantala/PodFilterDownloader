@@ -31,6 +31,8 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lblUpdateAvailable = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.lblAuthor = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.btnMoreInfoOnSelectedFilter = new System.Windows.Forms.Button();
@@ -48,8 +50,7 @@
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.lblUpdateAvailable = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.lvFilters = new System.Windows.Forms.ListView();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -72,6 +73,22 @@
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Click on button to download PoD filter";
+            // 
+            // lblUpdateAvailable
+            // 
+            this.lblUpdateAvailable.Location = new System.Drawing.Point(465, 155);
+            this.lblUpdateAvailable.Name = "lblUpdateAvailable";
+            this.lblUpdateAvailable.Size = new System.Drawing.Size(172, 17);
+            this.lblUpdateAvailable.TabIndex = 9;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(461, 116);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(114, 17);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Update available";
             // 
             // lblAuthor
             // 
@@ -214,27 +231,22 @@
             this.timer.Interval = 250;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
-            // lblUpdateAvailable
+            // lvFilters
             // 
-            this.lblUpdateAvailable.Location = new System.Drawing.Point(465, 155);
-            this.lblUpdateAvailable.Name = "lblUpdateAvailable";
-            this.lblUpdateAvailable.Size = new System.Drawing.Size(172, 17);
-            this.lblUpdateAvailable.TabIndex = 9;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(461, 116);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(114, 17);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Update available";
+            this.lvFilters.HideSelection = false;
+            this.lvFilters.Location = new System.Drawing.Point(29, 543);
+            this.lvFilters.MultiSelect = false;
+            this.lvFilters.Name = "lvFilters";
+            this.lvFilters.Size = new System.Drawing.Size(934, 379);
+            this.lvFilters.TabIndex = 3;
+            this.lvFilters.UseCompatibleStateImageBehavior = false;
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1001, 541);
+            this.ClientSize = new System.Drawing.Size(1001, 948);
+            this.Controls.Add(this.lvFilters);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -278,6 +290,7 @@
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.Label lblUpdateAvailable;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ListView lvFilters;
     }
 }
 

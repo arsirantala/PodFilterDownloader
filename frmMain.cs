@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
@@ -113,7 +115,6 @@ namespace PodFilterDownloader
 
             lblUpdateAvailable.Text = @"No";
 
-
             MessageBox.Show(@"Loaded and copied filter file to Pod filter directory", @"Status", MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
             btnDownloadSelectedFilter.Enabled = true;
@@ -147,7 +148,41 @@ namespace PodFilterDownloader
 
             _data = _parser.ReadFile(_configFile);
 
-            foreach (var section in _data.Sections) lbAvailableFilters.Items.Add(section.SectionName);
+            lvFilters.View = View.Details;
+            lvFilters.FullRowSelect = true;
+            lvFilters.Columns.Add("Filter", -1, HorizontalAlignment.Left);
+            lvFilters.Columns.Add("Description", -1, HorizontalAlignment.Left);
+
+            ListViewGroup lvg;
+            bool found;
+
+            foreach (var section in _data.Sections)
+            {
+                lbAvailableFilters.Items.Add(section.SectionName);
+
+                // Find group or create a new group
+                found = false;
+                lvg = null;
+                foreach (var grp in lvFilters.Groups.Cast<ListViewGroup>().Where(grp => grp.ToString() == _data[section.SectionName].GetKeyData("author").Value))
+                {
+                    found = true;
+                    lvg = grp;
+                    break;
+                }
+
+                if (!found)
+                {
+                    // Group not found, create
+                    lvg = new ListViewGroup(_data[section.SectionName].GetKeyData("author").Value);
+                    lvFilters.Groups.Add(lvg);
+                }
+
+                // Add ListViewItem
+                lvFilters.Items.Add(new ListViewItem(new[] {section.SectionName, _data[section.SectionName].GetKeyData("description").Value}, lvg));
+            }
+
+            lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             lbAvailableFilters.SelectedIndex = int.Parse(_data.Global.GetKeyData("SelectedAvailableFilterIndex").Value);
             _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
@@ -230,6 +265,12 @@ namespace PodFilterDownloader
                     test.Value = webResponse.Headers["Date"];
                     _data[filter.SectionName].SetKeyData(test);
                     _parser.WriteFile(_configFile, _data);
+
+                    if (_data[filter.SectionName].GetKeyData("etag").Value !=
+                        _data[filter.SectionName].GetKeyData("downloaded_etag").Value)
+                    {
+                        lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
+                    }
                 }
             }
         }
