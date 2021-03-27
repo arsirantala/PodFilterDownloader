@@ -51,6 +51,7 @@
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.lvFilters = new System.Windows.Forms.ListView();
+            this.btnDownloadUpdatedFilters = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -241,11 +242,23 @@
             this.lvFilters.TabIndex = 3;
             this.lvFilters.UseCompatibleStateImageBehavior = false;
             // 
+            // btnDownloadUpdatedFilters
+            // 
+            this.btnDownloadUpdatedFilters.Enabled = false;
+            this.btnDownloadUpdatedFilters.Location = new System.Drawing.Point(765, 945);
+            this.btnDownloadUpdatedFilters.Name = "btnDownloadUpdatedFilters";
+            this.btnDownloadUpdatedFilters.Size = new System.Drawing.Size(198, 56);
+            this.btnDownloadUpdatedFilters.TabIndex = 4;
+            this.btnDownloadUpdatedFilters.Text = "Download updated filter(s)";
+            this.btnDownloadUpdatedFilters.UseVisualStyleBackColor = true;
+            this.btnDownloadUpdatedFilters.Click += new System.EventHandler(this.btnDownloadUpdatedFilters_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1001, 948);
+            this.ClientSize = new System.Drawing.Size(1001, 1032);
+            this.Controls.Add(this.btnDownloadUpdatedFilters);
             this.Controls.Add(this.lvFilters);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
@@ -291,6 +304,7 @@
         private System.Windows.Forms.Label lblUpdateAvailable;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ListView lvFilters;
+        private System.Windows.Forms.Button btnDownloadUpdatedFilters;
     }
 }
 
