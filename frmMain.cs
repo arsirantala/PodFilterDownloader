@@ -187,38 +187,53 @@ namespace PodFilterDownloader
             ListViewGroup lvg;
             bool found;
 
+            txtPodInstallationLoc.Text = _data.Global.GetKeyData("PodInstallLocation").Value;
+
             foreach (var section in _data.Sections)
             {
-                lbAvailableFilters.Items.Add(section.SectionName);
-
-                // Find group or create a new group
-                found = false;
-                lvg = null;
-                foreach (var grp in lvFilters.Groups.Cast<ListViewGroup>().Where(grp => grp.ToString() == _data[section.SectionName].GetKeyData("author").Value))
+                if (rbInstalled.Checked)
                 {
-                    found = true;
-                    lvg = grp;
-                    break;
-                }
+                    string author = _data[section.SectionName].GetKeyData("author").Value;
+                    if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{section.SectionName}.filter"))
+                    {
+                        lbAvailableFilters.Items.Add(section.SectionName);
 
-                if (!found)
-                {
-                    // Group not found, create
-                    lvg = new ListViewGroup(_data[section.SectionName].GetKeyData("author").Value);
-                    lvFilters.Groups.Add(lvg);
-                }
+                        // Find group or create a new group
+                        found = false;
+                        lvg = null;
+                        foreach (var grp in lvFilters.Groups.Cast<ListViewGroup>().Where(grp =>
+                            grp.ToString() == _data[section.SectionName].GetKeyData("author").Value))
+                        {
+                            found = true;
+                            lvg = grp;
+                            break;
+                        }
 
-                // Add ListViewItem
-                lvFilters.Items.Add(new ListViewItem(new[] {section.SectionName, _data[section.SectionName].GetKeyData("description").Value}, lvg));
+                        if (!found)
+                        {
+                            // Group not found, create
+                            lvg = new ListViewGroup(_data[section.SectionName].GetKeyData("author").Value);
+                            lvFilters.Groups.Add(lvg);
+                        }
+
+                        // Add ListViewItem
+                        lvFilters.Items.Add(new ListViewItem(
+                            new[] {section.SectionName, _data[section.SectionName].GetKeyData("description").Value},
+                            lvg));
+
+                    }
+                }
             }
 
             lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 
-            lbAvailableFilters.SelectedIndex = int.Parse(_data.Global.GetKeyData("SelectedAvailableFilterIndex").Value);
-            _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
+            if (lbAvailableFilters.Items.Count > 0)
+            {
+                lbAvailableFilters.SelectedIndex = int.Parse(_data.Global.GetKeyData("SelectedAvailableFilterIndex").Value);
+                _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
+            }
 
-            txtPodInstallationLoc.Text = _data.Global.GetKeyData("PodInstallLocation").Value;
             if (lbAvailableFilters.SelectedIndex != -1)
                 lblAuthor.Text = _data[_selectedFilter].GetKeyData("author").Value;
         }
@@ -300,59 +315,66 @@ namespace PodFilterDownloader
 
             foreach (var filter in _data.Sections)
             {
-                var url = _data[filter.SectionName].GetKeyData("download_url").Value;
-                var webRequest = WebRequest.Create(url);
-                webRequest.Method = "HEAD";
-
-                using (var webResponse = webRequest.GetResponse())
+                if (rbInstalled.Checked)
                 {
-                    var test = _data[filter.SectionName].GetKeyData("etag");
-                    test.Value = webResponse.Headers["ETag"];
-                    _data[filter.SectionName].SetKeyData(test);
-                    //_parser.WriteFile(_configFile, _data);
-
-                    test = _data[filter.SectionName].GetKeyData("content_length");
-                    test.Value = webResponse.ContentLength.ToString();
-                    _data[filter.SectionName].SetKeyData(test);
-                    //_parser.WriteFile(_configFile, _data);
-
-                    test = _data[filter.SectionName].GetKeyData("date_in_server");
-                    test.Value = webResponse.Headers["Date"];
-                    _data[filter.SectionName].SetKeyData(test);
-                    _parser.WriteFile(_configFile, _data);
-
-                    if (string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("etag").Value) &&
-                        string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("downloaded_etag").Value))
+                    string author = _data[filter.SectionName].GetKeyData("author").Value;
+                    if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
                     {
-                        // Not all servers support etag, use then the content-length instead (not very good approach!)
-                        if (_data[filter.SectionName].GetKeyData("content_length").Value !=
-                            _data[filter.SectionName].GetKeyData("downloaded_content_length").Value)
+                        var url = _data[filter.SectionName].GetKeyData("download_url").Value;
+                        var webRequest = WebRequest.Create(url);
+                        webRequest.Method = "HEAD";
+
+                        using (var webResponse = webRequest.GetResponse())
                         {
-                            lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
-                            updatesFound = true;
-                        }
-                        else
-                        {
-                            lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.White;
-                        }
-                    }
-                    else
-                    {
-                        if (_data[filter.SectionName].GetKeyData("etag").Value !=
-                            _data[filter.SectionName].GetKeyData("downloaded_etag").Value)
-                        {
-                            lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
-                            updatesFound = true;
-                        }
-                        else
-                        {
-                            lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.White;
+                            var test = _data[filter.SectionName].GetKeyData("etag");
+                            test.Value = webResponse.Headers["ETag"];
+                            _data[filter.SectionName].SetKeyData(test);
+
+                            test = _data[filter.SectionName].GetKeyData("content_length");
+                            test.Value = webResponse.ContentLength.ToString();
+                            _data[filter.SectionName].SetKeyData(test);
+
+                            test = _data[filter.SectionName].GetKeyData("date_in_server");
+                            test.Value = webResponse.Headers["Date"];
+                            _data[filter.SectionName].SetKeyData(test);
+                            _parser.WriteFile(_configFile, _data);
+
+                            if (string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("etag").Value) &&
+                                string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("downloaded_etag").Value))
+                            {
+                                // Not all servers support etag, use then the content-length instead (not very good approach!)
+                                if (_data[filter.SectionName].GetKeyData("content_length").Value !=
+                                    _data[filter.SectionName].GetKeyData("downloaded_content_length").Value)
+                                {
+                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
+                                    updatesFound = true;
+                                }
+                                else
+                                {
+                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.White;
+                                }
+                            }
+                            else
+                            {
+                                if (_data[filter.SectionName].GetKeyData("etag").Value !=
+                                    _data[filter.SectionName].GetKeyData("downloaded_etag").Value)
+                                {
+                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
+                                    updatesFound = true;
+                                }
+                                else
+                                {
+                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.White;
+                                }
+                            }
                         }
                     }
                 }
             }
 
             if (updatesFound) btnDownloadUpdatedFilters.Enabled = true;
+
+            btnRefresh.Enabled = true;
         }
 
         private void btnDownloadUpdatedFilters_Click(object sender, EventArgs e)
@@ -374,6 +396,12 @@ namespace PodFilterDownloader
             }
 
             if (updatesWereDone) timer.Enabled = true;
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            btnRefresh.Enabled = false;
+            timer.Enabled = true;
         }
     }
 }
