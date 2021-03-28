@@ -1,24 +1,22 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Xml.Xsl;
 using IniParser;
 using IniParser.Model;
 
 namespace PodFilterDownloader
 {
+    // ReSharper disable once InconsistentNaming
     public partial class frmMain : Form
     {
         private string _configFile;
         private IniData _data;
         private readonly FileIniDataParser _parser = new FileIniDataParser();
-        private string _selectedFilter;
 
         public frmMain()
         {
@@ -29,7 +27,7 @@ namespace PodFilterDownloader
         {
             if (txtPodInstallationLoc.Text.Trim().Length == 0)
             {
-                btnDownloadSelectedFilter.Enabled = true;
+                btnInstallSelected.Enabled = true;
                 btnBrowsePoDInstallLoc.Enabled = true;
                 if (!silent)
                     MessageBox.Show(@"You need to define the install location", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -44,7 +42,7 @@ namespace PodFilterDownloader
                     if (MessageBox.Show(@"The downloaded file is the same. Do you want to re download it?", @"Info",
                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) != DialogResult.Yes)
                     {
-                        btnDownloadSelectedFilter.Enabled = true;
+                        btnInstallSelected.Enabled = true;
                         btnBrowsePoDInstallLoc.Enabled = true;
                         return;
                     }
@@ -60,14 +58,15 @@ namespace PodFilterDownloader
                         @"Already downloaded filter file was copied to Pod filter directory, as it was the same as previously downloaded.",
                         @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                    btnDownloadSelectedFilter.Enabled = true;
+                    btnInstallSelected.Enabled = true;
                     btnBrowsePoDInstallLoc.Enabled = true;
+                    DownloadFileFinal(author, filtername);
                     return;
                 }
 
                 // File in temp is the same as one in the server, so just copy the file to PoD filter directory
-                File.Copy($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter",
-                    $"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", true);
+                //File.Copy($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter",
+                //$"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", true);
             }
 
             if (!silent)
@@ -88,14 +87,14 @@ namespace PodFilterDownloader
             }
         }
 
-        private bool DownloadFileFinal(string author, string filtername)
+        private void DownloadFileFinal(string author, string filtername)
         {
             if (author == "")
             {
                 if (rbAvailable.Checked && lvFilters.SelectedItems.Count > 0)
                     author = _data[lvFilters.SelectedItems[0].Text].GetKeyData("author").Value;
                 else
-                    author = lblAuthor.Text;
+                    Debug.WriteLine("author was empty");
             }
 
             if (filtername == "")
@@ -103,7 +102,7 @@ namespace PodFilterDownloader
                 if (rbAvailable.Checked && lvFilters.SelectedItems.Count > 0)
                     filtername = lvFilters.SelectedItems[0].Text;
                 else
-                    filtername = _selectedFilter;
+                    Debug.WriteLine("filtername issue");
             }
 
             // Update the ETag value for the downloaded file, so it can be later compared to the Etag for the same file in the internet
@@ -117,7 +116,6 @@ namespace PodFilterDownloader
                 test = _data[filtername].GetKeyData("downloaded_etag");
                 test.Value = webResponse.Headers["ETag"];
                 _data[filtername].SetKeyData(test);
-                //_parser.WriteFile(_configFile, _data);
 
                 test = _data[filtername].GetKeyData("downloaded_content_length");
                 test.Value = webResponse.ContentLength.ToString();
@@ -128,25 +126,25 @@ namespace PodFilterDownloader
             File.Copy($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter",
                 $"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", true);
 
+            if (_data[filtername].GetKeyData("date_in_server").Value != null)
+                File.SetCreationTime($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", 
+                    DateTime.Parse(_data[filtername].GetKeyData("date_in_server").Value));
+
             test = _data[filtername].GetKeyData("etag");
             test.Value = _data[filtername].GetKeyData("downloaded_etag").Value;
             _data[filtername].SetKeyData(test);
-            //_parser.WriteFile(_configFile, _data);
 
             test = _data[filtername].GetKeyData("content_length");
             test.Value = _data[filtername].GetKeyData("downloaded_content_length").Value;
             _data[filtername].SetKeyData(test);
             _parser.WriteFile(_configFile, _data);
 
-            lblUpdateAvailable.Text = @"No";
-
             //MessageBox.Show(@"Loaded and copied filter file to Pod filter directory", @"Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            btnDownloadSelectedFilter.Enabled = true;
+            btnInstallSelected.Enabled = true;
             btnBrowsePoDInstallLoc.Enabled = true;
 
-            return true;
+            UpdateListview();
         }
-
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
@@ -165,7 +163,7 @@ namespace PodFilterDownloader
 
             var result = browserDialog.ShowDialog();
 
-            if (result == DialogResult.OK) txtPodInstallationLoc.Text = browserDialog.SelectedPath;
+            if (result == DialogResult.OK) txtPodInstallationLoc.Text = browserDialog.SelectedPath.Trim();
         }
 
         private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -186,37 +184,31 @@ namespace PodFilterDownloader
 
             _data = _parser.ReadFile(_configFile);
 
+            txtPodInstallationLoc.Text = 
+                Directory.Exists(_data.Global.GetKeyData("PodInstallLocation").Value.Trim()) ? 
+                    _data.Global.GetKeyData("PodInstallLocation").Value.Trim() : "";
+
             UpdateListview();
-
-            if (lbAvailableFilters.Items.Count > 0)
-            {
-                lbAvailableFilters.SelectedIndex = int.Parse(_data.Global.GetKeyData("SelectedAvailableFilterIndex").Value);
-                _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
-            }
-
-            if (lbAvailableFilters.SelectedIndex != -1)
-                lblAuthor.Text = _data[_selectedFilter].GetKeyData("author").Value;
         }
 
         private void UpdateListview()
         {
+            lvFilters.BeginUpdate();
             lvFilters.Clear();
             lvFilters.View = View.Details;
             lvFilters.FullRowSelect = true;
             lvFilters.Columns.Add("Filter", -1, HorizontalAlignment.Left);
+            lvFilters.Columns.Add("State", -1, HorizontalAlignment.Left);
             lvFilters.Columns.Add("Description", -1, HorizontalAlignment.Left);
-
-            txtPodInstallationLoc.Text = _data.Global.GetKeyData("PodInstallLocation").Value;
 
             foreach (var section in _data.Sections)
             {
-                string author = _data[section.SectionName].GetKeyData("author").Value;
+                //string author = _data[section.SectionName].GetKeyData("author").Value;
                 bool filterExists =
                     File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{section.SectionName}.filter");
+                
                 if ((rbInstalled.Checked && filterExists) || (rbAvailable.Checked && !filterExists))
                 {
-                    lbAvailableFilters.Items.Add(section.SectionName);
-
                     // Find group or create a new group
                     var found = false;
                     ListViewGroup lvg = null;
@@ -237,70 +229,68 @@ namespace PodFilterDownloader
 
                     // Add ListViewItem
                     lvFilters.Items.Add(new ListViewItem(
-                        new[] { section.SectionName, _data[section.SectionName].GetKeyData("description").Value },
+                        new[] { section.SectionName, filterExists ? "Installed" : "Available",
+                            _data[section.SectionName].GetKeyData("description").Value },
                         lvg));
                 }
             }
 
-            lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            if (lvFilters.Items.Count == 0)
+            {
+                lvFilters.Columns[0].Width = lvFilters.Columns[1].Width = lvFilters.Columns[2].Width = 200;
+                btnInstallSelected.Enabled = btnDownloadUpdatedFilters.Enabled = btnRemoveSelected.Enabled =
+                    btnMoreInfoOnSelectedFilter.Enabled = btnInstallSelected.Enabled = false;
+            }
+            else
+            {
+                lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                lvFilters.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            }
+
+            lvFilters.EndUpdate();
         }
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             var test = _data.Global.GetKeyData("PodInstallLocation");
-            test.Value = txtPodInstallationLoc.Text;
-            _data.Global.SetKeyData(test);
-            test = _data.Global.GetKeyData("SelectedAvailableFilterIndex");
-
-            test.Value = lbAvailableFilters.SelectedIndex.ToString();
-            _data.Global.SetKeyData(test);
-
+            test.Value = txtPodInstallationLoc.Text.Trim();
             _parser.WriteFile(_configFile, _data);
         }
 
         private void toolStripMenuItemHelpAbout_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                $@"PoD filter downloader by Ixoth{Environment.NewLine}Version: {Application.ProductVersion}{Environment.NewLine}{Environment.NewLine}Copyright (C) 2021{Environment.NewLine}All rights reserved",
+                $@"Ixoth\'s PoD filter downloader{Environment.NewLine}Version: {Application.ProductVersion}{Environment.NewLine}{Environment.NewLine}Copyright (C) 2021{Environment.NewLine}All rights reserved",
                 @"About...", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void btnDownloadSelectedFilter_Click(object sender, EventArgs e)
-        {
-            btnDownloadSelectedFilter.Enabled = false;
-            DownloadFilterFile(_selectedFilter, _data[_selectedFilter].GetKeyData("download_url").Value, _data[_selectedFilter].GetKeyData("author").Value, false);
         }
 
         private void btnMoreInfoOnSelectedFilter_Click(object sender, EventArgs e)
         {
-            if (lbAvailableFilters.SelectedIndex == -1)
+            if (lvFilters.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"Please select first some filter in the listbox!", @"Error", MessageBoxButtons.OK,
+                MessageBox.Show(@"Please select first some filter in the listview!", @"Error", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
 
-            Process.Start(_data[_selectedFilter].GetKeyData("home_repo_url").Value);
-        }
-
-        private void lbAvailableFilters_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            _selectedFilter = lbAvailableFilters.GetItemText(lbAvailableFilters.SelectedItem);
-            lblAuthor.Text = _data[_selectedFilter].GetKeyData("author").Value;
-            lblUpdateAvailable.Text = _data[_selectedFilter].GetKeyData("etag").Value != _data[_selectedFilter].GetKeyData("downloaded_etag").Value ? "Yes" : "No";
+            Process.Start(_data[lvFilters.SelectedItems[0].Text].GetKeyData("home_repo_url").Value);
         }
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            // Check the already downloaded filters in the filter directory
-            txtPodInstallationLoc.Text = txtPodInstallationLoc.Text.Trim();
+            timer.Enabled = false;
+
+            // Check the ETag values for the filters in servers, so that filters which have been changed can be indicated that there might be new version available
+
+            // TODO in first start phase, when no etags have been yet written to the ini file, check the already downloaded filters and compare the lengths of those to the 
+            // lengths at servers
 
             if (txtPodInstallationLoc.Text.Length > 0 && (txtPodInstallationLoc.Text.Length > 0 && Directory.Exists(txtPodInstallationLoc.Text)))
             {
                 foreach (var filter in _data.Sections)
                 {
-                    string author = _data[filter.SectionName].GetKeyData("author").Value;
+                    //string author = _data[filter.SectionName].GetKeyData("author").Value;
                     if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
                     {
                         var test = _data[filter.SectionName].GetKeyData("downloaded_content_length");
@@ -311,21 +301,20 @@ namespace PodFilterDownloader
                 }
             }
 
-            // Check the ETag values for the filters in servers, so that filters which have been changed can be indicated that there might be new version available
-
-
-            // TODO in first start phase, when no etags have been yet written to the ini file, check the already downloaded filters and compare the lengths of those to the 
-            // lengths at servers
-
-            timer.Enabled = false;
-
             bool updatesFound = false;
 
             foreach (var filter in _data.Sections)
             {
+                if (lvFilters.Items.Count == 0)
+                {
+                    btnRefresh.Enabled = true;
+                    Debug.WriteLine("Empty listview!");
+                    return;
+                }
+
                 if (rbInstalled.Checked)
                 {
-                    string author = _data[filter.SectionName].GetKeyData("author").Value;
+                    //string author = _data[filter.SectionName].GetKeyData("author").Value;
                     if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
                     {
                         var url = _data[filter.SectionName].GetKeyData("download_url").Value;
@@ -354,12 +343,9 @@ namespace PodFilterDownloader
                                 if (_data[filter.SectionName].GetKeyData("content_length").Value !=
                                     _data[filter.SectionName].GetKeyData("downloaded_content_length").Value)
                                 {
-                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
+                                    lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
+                                        @"Update available";
                                     updatesFound = true;
-                                }
-                                else
-                                {
-                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.White;
                                 }
                             }
                             else
@@ -367,12 +353,9 @@ namespace PodFilterDownloader
                                 if (_data[filter.SectionName].GetKeyData("etag").Value !=
                                     _data[filter.SectionName].GetKeyData("downloaded_etag").Value)
                                 {
-                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.HotPink;
+                                    lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
+                                        @"Update available";
                                     updatesFound = true;
-                                }
-                                else
-                                {
-                                    lvFilters.FindItemWithText(filter.SectionName).BackColor = Color.White;
                                 }
                             }
                         }
@@ -381,6 +364,8 @@ namespace PodFilterDownloader
             }
 
             if (updatesFound) btnDownloadUpdatedFilters.Enabled = true;
+            
+            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             btnRefresh.Enabled = true;
         }
@@ -400,11 +385,9 @@ namespace PodFilterDownloader
 
             foreach (ListViewItem item in lvFilters.Items)
             {
-                if (item.BackColor == Color.HotPink)
+                if (item.SubItems[1].Text == @"Update available")
                 {
                     DownloadFilterFile(item.Text, _data[item.Text].GetKeyData("download_url").Value, _data[item.Text].GetKeyData("author").Value, true);
-
-                    item.BackColor = Color.White;
 
                     updatesWereDone = true;
                 }
@@ -419,22 +402,86 @@ namespace PodFilterDownloader
             timer.Enabled = true;
         }
 
+        private void UpdateButtonStates()
+        {
+            if (rbInstalled.Checked)
+            {
+                if (lvFilters.SelectedItems.Count == 0)
+                {
+                    btnRemoveSelected.Enabled = false;
+                    btnMoreInfoOnSelectedFilter.Enabled = false;
+                }
+                else
+                {
+                    btnRemoveSelected.Enabled = true;
+                    btnMoreInfoOnSelectedFilter.Enabled = true;
+                }
+                btnInstallSelected.Enabled = false;
+                btnDownloadUpdatedFilters.Enabled = true;
+            }
+            else
+            {
+                if (lvFilters.SelectedItems.Count == 0)
+                {
+                    btnMoreInfoOnSelectedFilter.Enabled = false;
+                    btnInstallSelected.Enabled = false;
+                }
+                else
+                {
+                    btnInstallSelected.Enabled = true;
+                    btnMoreInfoOnSelectedFilter.Enabled = true;
+                }
+
+                btnRemoveSelected.Enabled = false;
+                btnDownloadUpdatedFilters.Enabled = false;
+            }
+        }
+
         private void rbInstalled_CheckedChanged(object sender, EventArgs e)
         {
             UpdateListview();
 
-            btnInstallSelected.Enabled = rbAvailable.Checked;
+            UpdateButtonStates();
         }
 
         private void btnInstallSelected_Click(object sender, EventArgs e)
         {
-            if (lvFilters.SelectedItems.Count > 0)
+            if (lvFilters.SelectedItems.Count == 1)
             {
                 btnInstallSelected.Enabled = false;
                 DownloadFilterFile(lvFilters.SelectedItems[0].Text, 
                     _data[lvFilters.SelectedItems[0].Text].GetKeyData("download_url").Value, 
                     _data[lvFilters.SelectedItems[0].Text].GetKeyData("author").Value, false);
             }
+        }
+
+        private void btnRemoveSelected_Click(object sender, EventArgs e)
+        {
+            if (!rbInstalled.Checked)
+            {
+                MessageBox.Show(@"Please check the installed radio button", @"Feature not available",
+                    MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+
+            if (lvFilters.SelectedItems.Count == 0)
+            {
+                MessageBox.Show(@"Please select first some filter in the listview!", @"Error", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return;
+            }
+
+            if (MessageBox.Show(@"Are you sure you want to remove file: " + lvFilters.SelectedItems[0].Text, @"Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                File.Delete($"{txtPodInstallationLoc.Text}\\filter\\{lvFilters.SelectedItems[0].Text}.filter");
+
+                UpdateListview();
+            }
+        }
+
+        private void lvFilters_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            UpdateButtonStates();
         }
     }
 }
