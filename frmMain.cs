@@ -8,6 +8,8 @@ using System.Reflection;
 using System.Windows.Forms;
 using IniParser;
 using IniParser.Model;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PodFilterDownloader
 {
@@ -17,6 +19,24 @@ namespace PodFilterDownloader
         private string _configFile;
         private IniData _data;
         private readonly FileIniDataParser _parser = new FileIniDataParser();
+        private SHA256 _sha256 = SHA256.Create();
+
+        /// <summary>
+        /// Compute the file's hash
+        /// </summary>
+        /// <param name="filename">Path to file from which the sha256 is calculated</param>
+        /// <returns>Sha256 value</returns>
+        private byte[] GetHashSha256(string filename)
+        {
+            using (FileStream stream = File.OpenRead(filename))
+            {
+                return _sha256.ComputeHash(stream);
+            }
+        }
+        private string BytesToString(byte[] bytes)
+        {
+            return bytes.Aggregate("", (current, b) => current + b.ToString("x2"));
+        }
 
         public frmMain()
         {
@@ -126,9 +146,14 @@ namespace PodFilterDownloader
             File.Copy($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter",
                 $"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", true);
 
-            if (_data[filtername].GetKeyData("date_in_server").Value != null)
-                File.SetCreationTime($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", 
-                    DateTime.Parse(_data[filtername].GetKeyData("date_in_server").Value));
+            test = _data[filtername].GetKeyData("sha256");
+            test.Value = BytesToString(GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter"));
+            _data[filtername].SetKeyData(test);
+            _parser.WriteFile(_configFile, _data);
+
+            //if (!string.IsNullOrEmpty(_data[filtername].GetKeyData("date_in_server").Value))
+            //    File.SetCreationTime($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", 
+            //        DateTime.Parse(_data[filtername].GetKeyData("date_in_server").Value));
 
             test = _data[filtername].GetKeyData("etag");
             test.Value = _data[filtername].GetKeyData("downloaded_etag").Value;
