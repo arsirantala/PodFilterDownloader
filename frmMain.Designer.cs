@@ -55,6 +55,7 @@
             this.rbInstalled = new System.Windows.Forms.RadioButton();
             this.btnDownloadUpdatedFilters = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnInstallSelected = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -272,6 +273,7 @@
             this.rbAvailable.TabIndex = 10;
             this.rbAvailable.Text = "Available";
             this.rbAvailable.UseVisualStyleBackColor = true;
+            this.rbAvailable.CheckedChanged += new System.EventHandler(this.rbInstalled_CheckedChanged);
             // 
             // rbInstalled
             // 
@@ -285,6 +287,7 @@
             this.rbInstalled.TabStop = true;
             this.rbInstalled.Text = "Installed";
             this.rbInstalled.UseVisualStyleBackColor = true;
+            this.rbInstalled.CheckedChanged += new System.EventHandler(this.rbInstalled_CheckedChanged);
             // 
             // btnDownloadUpdatedFilters
             // 
@@ -306,11 +309,23 @@
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
+            // btnInstallSelected
+            // 
+            this.btnInstallSelected.Enabled = false;
+            this.btnInstallSelected.Location = new System.Drawing.Point(400, 574);
+            this.btnInstallSelected.Name = "btnInstallSelected";
+            this.btnInstallSelected.Size = new System.Drawing.Size(121, 23);
+            this.btnInstallSelected.TabIndex = 12;
+            this.btnInstallSelected.Text = "Install selected";
+            this.btnInstallSelected.UseVisualStyleBackColor = true;
+            this.btnInstallSelected.Click += new System.EventHandler(this.btnInstallSelected_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(751, 609);
+            this.Controls.Add(this.btnInstallSelected);
             this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnDownloadUpdatedFilters);
             this.Controls.Add(this.groupBox3);
@@ -366,6 +381,7 @@
         private System.Windows.Forms.RadioButton rbInstalled;
         private System.Windows.Forms.Button btnDownloadUpdatedFilters;
         private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.Button btnInstallSelected;
     }
 }
 

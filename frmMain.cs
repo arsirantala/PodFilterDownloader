@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
+using System.Xml.Xsl;
 using IniParser;
 using IniParser.Model;
 
@@ -91,12 +92,18 @@ namespace PodFilterDownloader
         {
             if (author == "")
             {
-                author = lblAuthor.Text;
+                if (rbAvailable.Checked && lvFilters.SelectedItems.Count > 0)
+                    author = _data[lvFilters.SelectedItems[0].Text].GetKeyData("author").Value;
+                else
+                    author = lblAuthor.Text;
             }
 
             if (filtername == "")
             {
-                filtername = _selectedFilter;
+                if (rbAvailable.Checked && lvFilters.SelectedItems.Count > 0)
+                    filtername = lvFilters.SelectedItems[0].Text;
+                else
+                    filtername = _selectedFilter;
             }
 
             // Update the ETag value for the downloaded file, so it can be later compared to the Etag for the same file in the internet
@@ -179,54 +186,7 @@ namespace PodFilterDownloader
 
             _data = _parser.ReadFile(_configFile);
 
-            lvFilters.View = View.Details;
-            lvFilters.FullRowSelect = true;
-            lvFilters.Columns.Add("Filter", -1, HorizontalAlignment.Left);
-            lvFilters.Columns.Add("Description", -1, HorizontalAlignment.Left);
-
-            ListViewGroup lvg;
-            bool found;
-
-            txtPodInstallationLoc.Text = _data.Global.GetKeyData("PodInstallLocation").Value;
-
-            foreach (var section in _data.Sections)
-            {
-                if (rbInstalled.Checked)
-                {
-                    string author = _data[section.SectionName].GetKeyData("author").Value;
-                    if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{section.SectionName}.filter"))
-                    {
-                        lbAvailableFilters.Items.Add(section.SectionName);
-
-                        // Find group or create a new group
-                        found = false;
-                        lvg = null;
-                        foreach (var grp in lvFilters.Groups.Cast<ListViewGroup>().Where(grp =>
-                            grp.ToString() == _data[section.SectionName].GetKeyData("author").Value))
-                        {
-                            found = true;
-                            lvg = grp;
-                            break;
-                        }
-
-                        if (!found)
-                        {
-                            // Group not found, create
-                            lvg = new ListViewGroup(_data[section.SectionName].GetKeyData("author").Value);
-                            lvFilters.Groups.Add(lvg);
-                        }
-
-                        // Add ListViewItem
-                        lvFilters.Items.Add(new ListViewItem(
-                            new[] {section.SectionName, _data[section.SectionName].GetKeyData("description").Value},
-                            lvg));
-
-                    }
-                }
-            }
-
-            lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            UpdateListview();
 
             if (lbAvailableFilters.Items.Count > 0)
             {
@@ -236,6 +196,54 @@ namespace PodFilterDownloader
 
             if (lbAvailableFilters.SelectedIndex != -1)
                 lblAuthor.Text = _data[_selectedFilter].GetKeyData("author").Value;
+        }
+
+        private void UpdateListview()
+        {
+            lvFilters.Clear();
+            lvFilters.View = View.Details;
+            lvFilters.FullRowSelect = true;
+            lvFilters.Columns.Add("Filter", -1, HorizontalAlignment.Left);
+            lvFilters.Columns.Add("Description", -1, HorizontalAlignment.Left);
+
+            txtPodInstallationLoc.Text = _data.Global.GetKeyData("PodInstallLocation").Value;
+
+            foreach (var section in _data.Sections)
+            {
+                string author = _data[section.SectionName].GetKeyData("author").Value;
+                bool filterExists =
+                    File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{section.SectionName}.filter");
+                if ((rbInstalled.Checked && filterExists) || (rbAvailable.Checked && !filterExists))
+                {
+                    lbAvailableFilters.Items.Add(section.SectionName);
+
+                    // Find group or create a new group
+                    var found = false;
+                    ListViewGroup lvg = null;
+                    foreach (var grp in lvFilters.Groups.Cast<ListViewGroup>().Where(grp =>
+                        grp.ToString() == _data[section.SectionName].GetKeyData("author").Value))
+                    {
+                        found = true;
+                        lvg = grp;
+                        break;
+                    }
+
+                    if (!found)
+                    {
+                        // Group not found, create
+                        lvg = new ListViewGroup(_data[section.SectionName].GetKeyData("author").Value);
+                        lvFilters.Groups.Add(lvg);
+                    }
+
+                    // Add ListViewItem
+                    lvFilters.Items.Add(new ListViewItem(
+                        new[] { section.SectionName, _data[section.SectionName].GetKeyData("description").Value },
+                        lvg));
+                }
+            }
+
+            lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -379,6 +387,13 @@ namespace PodFilterDownloader
 
         private void btnDownloadUpdatedFilters_Click(object sender, EventArgs e)
         {
+            if (!rbInstalled.Checked)
+            {
+                MessageBox.Show(@"Please check the installed radio button", @"Feature not available",
+                    MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
+                return;
+            }
+
             btnDownloadUpdatedFilters.Enabled = false;
 
             bool updatesWereDone = false;
@@ -402,6 +417,24 @@ namespace PodFilterDownloader
         {
             btnRefresh.Enabled = false;
             timer.Enabled = true;
+        }
+
+        private void rbInstalled_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateListview();
+
+            btnInstallSelected.Enabled = rbAvailable.Checked;
+        }
+
+        private void btnInstallSelected_Click(object sender, EventArgs e)
+        {
+            if (lvFilters.SelectedItems.Count > 0)
+            {
+                btnInstallSelected.Enabled = false;
+                DownloadFilterFile(lvFilters.SelectedItems[0].Text, 
+                    _data[lvFilters.SelectedItems[0].Text].GetKeyData("download_url").Value, 
+                    _data[lvFilters.SelectedItems[0].Text].GetKeyData("author").Value, false);
+            }
         }
     }
 }
