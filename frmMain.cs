@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using IniParser;
 using IniParser.Model;
 using System.Security.Cryptography;
+using Microsoft.Win32;
 
 namespace PodFilterDownloader
 {
@@ -57,8 +58,8 @@ namespace PodFilterDownloader
             }
 
             if ((_data[filtername].GetKeyData("downloaded_etag").Value ==
-                 _data[filtername].GetKeyData("etag").Value) && _data[filtername].GetKeyData("downloaded_content_length").Value ==
-                _data[filtername].GetKeyData("content_length").Value)
+                 _data[filtername].GetKeyData("server_etag").Value) && _data[filtername].GetKeyData("downloaded_content_length").Value ==
+                _data[filtername].GetKeyData("server_content_length").Value)
             {
                 if (!silent)
                     if (MessageBox.Show(rm.GetString("frmMain_The_downloaded_file_is_the_same__Do_you_want_to_re_download_it"), rm.GetString("frmMain_Info"),
@@ -73,7 +74,7 @@ namespace PodFilterDownloader
             if (File.Exists($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter"))
             {
                 if (_data[filtername].GetKeyData("downloaded_content_length").Value ==
-                    _data[filtername].GetKeyData("content_length").Value)
+                    _data[filtername].GetKeyData("server_content_length").Value)
                 {
                     if (!silent)
                         MessageBox.Show(
@@ -85,10 +86,6 @@ namespace PodFilterDownloader
                     DownloadFileFinal(author, filtername);
                     return;
                 }
-
-                // File in temp is the same as one in the server, so just copy the file to PoD filter directory
-                //File.Copy($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter",
-                //$"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", true);
             }
 
             if (!silent)
@@ -148,20 +145,15 @@ namespace PodFilterDownloader
             File.Copy($"{Path.GetTempPath()}\\{author}_{filtername}_item.filter",
                 $"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", true);
 
-            test = _data[filtername].GetKeyData("sha256");
+            test = _data[filtername].GetKeyData("downloaded_sha256");
             test.Value = BytesToString(GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter"));
             _data[filtername].SetKeyData(test);
-            _parser.WriteFile(_configFile, _data);
 
-            //if (!string.IsNullOrEmpty(_data[filtername].GetKeyData("date_in_server").Value))
-            //    File.SetCreationTime($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter", 
-            //        DateTime.Parse(_data[filtername].GetKeyData("date_in_server").Value));
-
-            test = _data[filtername].GetKeyData("etag");
+            test = _data[filtername].GetKeyData("server_etag");
             test.Value = _data[filtername].GetKeyData("downloaded_etag").Value;
             _data[filtername].SetKeyData(test);
 
-            test = _data[filtername].GetKeyData("content_length");
+            test = _data[filtername].GetKeyData("server_content_length");
             test.Value = _data[filtername].GetKeyData("downloaded_content_length").Value;
             _data[filtername].SetKeyData(test);
             _parser.WriteFile(_configFile, _data);
@@ -170,7 +162,10 @@ namespace PodFilterDownloader
             btnInstallSelected.Enabled = true;
             btnBrowsePoDInstallLoc.Enabled = true;
 
-            UpdateListview();
+            var temp = lvFilters.FindItemWithText(filtername);
+            lvFilters.Items.Remove(temp);
+
+            timer.Enabled = true;
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -210,6 +205,29 @@ namespace PodFilterDownloader
             Application.Exit();
         }
 
+        private string GetD2InstallLocationFromRegistry()
+        {
+            string d2LoDInstallPath = "";
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(
+                    "Software\\Blizzard Entertainment\\Diablo II"))
+                {
+                    Object o = key?.GetValue("InstallPath");
+                    if (o != null)
+                    {
+                        d2LoDInstallPath = o.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            return d2LoDInstallPath;
+        }
+
         private void frmMain_Load(object sender, EventArgs e)
         {
             _configFile = Path.Combine(
@@ -221,6 +239,11 @@ namespace PodFilterDownloader
             txtPodInstallationLoc.Text = 
                 Directory.Exists(_data.Global.GetKeyData("PodInstallLocation").Value.Trim()) ? 
                     _data.Global.GetKeyData("PodInstallLocation").Value.Trim() : "";
+
+            if (txtPodInstallationLoc.Text.Length == 0)
+            {
+                txtPodInstallationLoc.Text = $@"{GetD2InstallLocationFromRegistry()}\Path of Diablo";
+            }
 
             UpdateListview();
 
@@ -279,8 +302,8 @@ namespace PodFilterDownloader
                     // Add ListViewItem
                     lvFilters.Items.Add(new ListViewItem(
                         new[] { section.SectionName, filterExists ? "Installed" : "Available",
-                            _data[section.SectionName].GetKeyData("description").Value },
-                        lvg));
+                            _data[section.SectionName].GetKeyData("description").Value }, lvg));
+                    lvFilters.Items[lvFilters.Items.Count - 1].Tag = section.SectionName;
                 }
             }
 
@@ -335,15 +358,19 @@ namespace PodFilterDownloader
             // TODO in first start phase, when no etags have been yet written to the ini file, check the already downloaded filters and compare the lengths of those to the 
             // lengths at servers
 
-            if (txtPodInstallationLoc.Text.Length > 0 && (txtPodInstallationLoc.Text.Length > 0 && Directory.Exists(txtPodInstallationLoc.Text)))
+            if (txtPodInstallationLoc.Text.Length > 0 && 
+                (txtPodInstallationLoc.Text.Length > 0 && Directory.Exists(txtPodInstallationLoc.Text)))
             {
                 foreach (var filter in _data.Sections)
                 {
-                    //string author = _data[filter.SectionName].GetKeyData("author").Value;
                     if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
                     {
-                        var test = _data[filter.SectionName].GetKeyData("downloaded_content_length");
+                        var test = _data[filter.SectionName].GetKeyData("installed_content_length");
                         test.Value = new FileInfo($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter").Length.ToString();
+                        _data[filter.SectionName].SetKeyData(test);
+
+                        test = _data[filter.SectionName].GetKeyData("installed_sha256");
+                        test.Value = BytesToString(GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"));
                         _data[filter.SectionName].SetKeyData(test);
                         _parser.WriteFile(_configFile, _data);
                     }
@@ -363,7 +390,6 @@ namespace PodFilterDownloader
 
                 if (rbInstalled.Checked)
                 {
-                    //string author = _data[filter.SectionName].GetKeyData("author").Value;
                     if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
                     {
                         var url = _data[filter.SectionName].GetKeyData("download_url").Value;
@@ -372,34 +398,53 @@ namespace PodFilterDownloader
 
                         using (var webResponse = webRequest.GetResponse())
                         {
-                            var test = _data[filter.SectionName].GetKeyData("etag");
+                            var test = _data[filter.SectionName].GetKeyData("server_etag");
                             test.Value = webResponse.Headers["ETag"];
                             _data[filter.SectionName].SetKeyData(test);
 
-                            test = _data[filter.SectionName].GetKeyData("content_length");
+                            test = _data[filter.SectionName].GetKeyData("server_content_length");
                             test.Value = webResponse.ContentLength.ToString();
                             _data[filter.SectionName].SetKeyData(test);
 
-                            test = _data[filter.SectionName].GetKeyData("date_in_server");
-                            test.Value = webResponse.Headers["Date"];
-                            _data[filter.SectionName].SetKeyData(test);
                             _parser.WriteFile(_configFile, _data);
 
-                            if (string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("etag").Value) &&
+                            if (string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("server_etag").Value) &&
                                 string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("downloaded_etag").Value))
                             {
                                 // Not all servers support etag, use then the content-length instead (not very good approach!)
-                                if (_data[filter.SectionName].GetKeyData("content_length").Value !=
-                                    _data[filter.SectionName].GetKeyData("downloaded_content_length").Value)
+                                if (!string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("downloaded_sha256").Value) &&
+                                    !string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("installed_sha256").Value))
                                 {
-                                    lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
-                                        rm.GetString("frmMain_Update_available");
-                                    updatesFound = true;
+                                    if (_data[filter.SectionName].GetKeyData("downloaded_sha256").Value !=
+                                        _data[filter.SectionName].GetKeyData("installed_sha256").Value)
+                                    {
+                                        lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
+                                            rm.GetString("frmMain_Update_available");
+                                        updatesFound = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("server_content_length").Value) &&
+                                        !string.IsNullOrEmpty(_data[filter.SectionName].GetKeyData("downloaded_content_length").Value))
+                                    {
+                                        if (_data[filter.SectionName].GetKeyData("server_content_length").Value !=
+                                            _data[filter.SectionName].GetKeyData("downloaded_content_length").Value)
+                                        {
+                                            lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
+                                                rm.GetString("frmMain_Update_available");
+                                            updatesFound = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.Write("oops");
+                                    }
                                 }
                             }
                             else
                             {
-                                if (_data[filter.SectionName].GetKeyData("etag").Value !=
+                                if (_data[filter.SectionName].GetKeyData("server_etag").Value !=
                                     _data[filter.SectionName].GetKeyData("downloaded_etag").Value)
                                 {
                                     lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
@@ -412,7 +457,7 @@ namespace PodFilterDownloader
                 }
             }
 
-            if (updatesFound) btnDownloadUpdatedFilters.Enabled = true;
+            btnDownloadUpdatedFilters.Enabled = updatesFound;
             
             lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 
@@ -466,7 +511,7 @@ namespace PodFilterDownloader
                     btnMoreInfoOnSelectedFilter.Enabled = true;
                 }
                 btnInstallSelected.Enabled = false;
-                btnDownloadUpdatedFilters.Enabled = true;
+                //btnDownloadUpdatedFilters.Enabled = true;
             }
             else
             {
@@ -482,7 +527,7 @@ namespace PodFilterDownloader
                 }
 
                 btnRemoveSelected.Enabled = false;
-                btnDownloadUpdatedFilters.Enabled = false;
+                //btnDownloadUpdatedFilters.Enabled = false;
             }
         }
 
@@ -520,11 +565,13 @@ namespace PodFilterDownloader
                 return;
             }
 
-            if (MessageBox.Show($"{rm.GetString("frmMain_Are_you_sure_you_want_to_remove_file")}: {lvFilters.SelectedItems[0].Text}", rm.GetString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show($"{rm.GetString("frmMain_Are_you_sure_you_want_to_remove_file")} {lvFilters.SelectedItems[0].Text}?", rm.GetString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 File.Delete($"{txtPodInstallationLoc.Text}\\filter\\{lvFilters.SelectedItems[0].Text}.filter");
 
-                UpdateListview();
+                //UpdateListview();
+                var temp = lvFilters.FindItemWithText(lvFilters.SelectedItems[0].Text);
+                lvFilters.Items.Remove(temp);
             }
         }
 

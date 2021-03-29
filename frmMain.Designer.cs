@@ -77,6 +77,7 @@
             // 
             // btnRemoveSelected
             // 
+            this.btnRemoveSelected.Enabled = false;
             this.btnRemoveSelected.Location = new System.Drawing.Point(38, 448);
             this.btnRemoveSelected.Name = "btnRemoveSelected";
             this.btnRemoveSelected.Size = new System.Drawing.Size(222, 38);
@@ -87,6 +88,7 @@
             // 
             // btnMoreInfoOnSelectedFilter
             // 
+            this.btnMoreInfoOnSelectedFilter.Enabled = false;
             this.btnMoreInfoOnSelectedFilter.Location = new System.Drawing.Point(297, 448);
             this.btnMoreInfoOnSelectedFilter.Name = "btnMoreInfoOnSelectedFilter";
             this.btnMoreInfoOnSelectedFilter.Size = new System.Drawing.Size(222, 38);
@@ -116,6 +118,7 @@
             // 
             // btnDownloadUpdatedFilters
             // 
+            this.btnDownloadUpdatedFilters.Enabled = false;
             this.btnDownloadUpdatedFilters.Location = new System.Drawing.Point(760, 448);
             this.btnDownloadUpdatedFilters.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnDownloadUpdatedFilters.Name = "btnDownloadUpdatedFilters";
@@ -241,7 +244,7 @@
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(270, 34);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(141, 34);
             this.toolStripMenuItemFileExit.Text = "Exit";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
@@ -256,7 +259,7 @@
             // toolStripMenuItemHelpAbout
             // 
             this.toolStripMenuItemHelpAbout.Name = "toolStripMenuItemHelpAbout";
-            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(270, 34);
+            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(176, 34);
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
