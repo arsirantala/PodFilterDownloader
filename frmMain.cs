@@ -186,9 +186,16 @@ namespace PodFilterDownloader
         {
             var browserDialog = new FolderBrowserDialog();
 
+            browserDialog.SelectedPath = txtPodInstallationLoc.Text.Trim();
+
             var result = browserDialog.ShowDialog();
 
-            if (result == DialogResult.OK) txtPodInstallationLoc.Text = browserDialog.SelectedPath.Trim();
+            if (result == DialogResult.OK)
+            {
+                txtPodInstallationLoc.Text = browserDialog.SelectedPath.Trim();
+                UpdateListview();
+                timer.Enabled = true;
+            }
         }
 
         private void wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
