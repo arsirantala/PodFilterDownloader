@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Resources;
 using System.Windows.Forms;
 using IniParser;
 using IniParser.Model;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace PodFilterDownloader
 {
@@ -20,6 +20,7 @@ namespace PodFilterDownloader
         private IniData _data;
         private readonly FileIniDataParser _parser = new FileIniDataParser();
         private SHA256 _sha256 = SHA256.Create();
+        private ResourceManager rm = new ResourceManager(typeof(frmMain));
 
         /// <summary>
         /// Compute the file's hash
@@ -50,7 +51,8 @@ namespace PodFilterDownloader
                 btnInstallSelected.Enabled = true;
                 btnBrowsePoDInstallLoc.Enabled = true;
                 if (!silent)
-                    MessageBox.Show(@"You need to define the install location", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(rm.GetString("frmMain_You_need_to_define_the_install_location"), 
+                        rm.GetString("frmMain_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -59,7 +61,7 @@ namespace PodFilterDownloader
                 _data[filtername].GetKeyData("content_length").Value)
             {
                 if (!silent)
-                    if (MessageBox.Show(@"The downloaded file is the same. Do you want to re download it?", @"Info",
+                    if (MessageBox.Show(rm.GetString("frmMain_The_downloaded_file_is_the_same__Do_you_want_to_re_download_it"), rm.GetString("frmMain_Info"),
                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) != DialogResult.Yes)
                     {
                         btnInstallSelected.Enabled = true;
@@ -75,8 +77,8 @@ namespace PodFilterDownloader
                 {
                     if (!silent)
                         MessageBox.Show(
-                        @"Already downloaded filter file was copied to Pod filter directory, as it was the same as previously downloaded.",
-                        @"Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        rm.GetString("frmMain_Already_downloaded_filter_file_was_copied_to_Pod_filter_directory__as_it_was_the_same_as_previously_downloaded"),
+                        rm.GetString("frmMain_Info"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                     btnInstallSelected.Enabled = true;
                     btnBrowsePoDInstallLoc.Enabled = true;
@@ -221,6 +223,21 @@ namespace PodFilterDownloader
                     _data.Global.GetKeyData("PodInstallLocation").Value.Trim() : "";
 
             UpdateListview();
+
+            rbAvailable.Text = rm.GetString("frmMain_Available");
+            rbInstalled.Text = rm.GetString("frmMain_Installed");
+            gbPoDInstallLocation.Text = rm.GetString("frmMain_gbPoD_Install_Location");
+            gbInstalled_Available.Text = rm.GetString("frmMain_gbInstalled_Available");
+            gbOuter.Text = rm.GetString("frmMain_gbOuter");
+            btnRefresh.Text = rm.GetString("frmMain_btnRefresh");
+            btnRemoveSelected.Text = rm.GetString("frmMain_btnRemove_Selected");
+            btnMoreInfoOnSelectedFilter.Text = rm.GetString("frmMain_btnMore_Info_On_Selected_Filter");
+            btnInstallSelected.Text = rm.GetString("frmMain_btnInstall_Selected");
+            btnDownloadUpdatedFilters.Text = rm.GetString("frmMain_btnDownload_updates");
+            toolStripMenuItemFile.Text = rm.GetString("frmMain_File_Menu");
+            toolStripMenuItemHelp.Text = rm.GetString("frmMain_Help_Menu");
+            toolStripMenuItemFileExit.Text = rm.GetString("frmMain_File_Exit_Menuitem");
+            toolStripMenuItemHelpAbout.Text = rm.GetString("frmMain_About");
         }
 
         private void UpdateListview()
@@ -229,9 +246,9 @@ namespace PodFilterDownloader
             lvFilters.Clear();
             lvFilters.View = View.Details;
             lvFilters.FullRowSelect = true;
-            lvFilters.Columns.Add("Filter", -1, HorizontalAlignment.Left);
-            lvFilters.Columns.Add("State", -1, HorizontalAlignment.Left);
-            lvFilters.Columns.Add("Description", -1, HorizontalAlignment.Left);
+            lvFilters.Columns.Add(rm.GetString("frmMain_Filter"), -1, HorizontalAlignment.Left);
+            lvFilters.Columns.Add(rm.GetString("frmMain_State"), -1, HorizontalAlignment.Left);
+            lvFilters.Columns.Add(rm.GetString("frmMain_Description"), -1, HorizontalAlignment.Left);
 
             foreach (var section in _data.Sections)
             {
@@ -293,15 +310,15 @@ namespace PodFilterDownloader
         private void toolStripMenuItemHelpAbout_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
-                $@"Ixoth\'s PoD filter downloader{Environment.NewLine}Version: {Application.ProductVersion}{Environment.NewLine}{Environment.NewLine}Copyright (C) 2021{Environment.NewLine}All rights reserved",
-                @"About...", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                $"{rm.GetString("frmMain_About_Message")}{Environment.NewLine}{rm.GetString("frmMain_Version")}: {Application.ProductVersion}{Environment.NewLine}{Environment.NewLine}{rm.GetString("frmMain_Copyright")} 2021{Environment.NewLine}{rm.GetString("frmMain_AllRightsReserved")}",
+                rm.GetString("frmMain_About"), MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnMoreInfoOnSelectedFilter_Click(object sender, EventArgs e)
         {
             if (lvFilters.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"Please select first some filter in the listview!", @"Error", MessageBoxButtons.OK,
+                MessageBox.Show(rm.GetString("frmMain_No_Filter_Selected_In_LV"), rm.GetString("frmMain_Error"), MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
@@ -376,7 +393,7 @@ namespace PodFilterDownloader
                                     _data[filter.SectionName].GetKeyData("downloaded_content_length").Value)
                                 {
                                     lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
-                                        @"Update available";
+                                        rm.GetString("frmMain_Update_available");
                                     updatesFound = true;
                                 }
                             }
@@ -386,7 +403,7 @@ namespace PodFilterDownloader
                                     _data[filter.SectionName].GetKeyData("downloaded_etag").Value)
                                 {
                                     lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
-                                        @"Update available";
+                                        rm.GetString("frmMain_Update_available");
                                     updatesFound = true;
                                 }
                             }
@@ -406,7 +423,7 @@ namespace PodFilterDownloader
         {
             if (!rbInstalled.Checked)
             {
-                MessageBox.Show(@"Please check the installed radio button", @"Feature not available",
+                MessageBox.Show(rm.GetString("frmMain_Please_check_the_installed_radio_button"), rm.GetString("frmMain_Feature_not_available"),
                     MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
@@ -417,7 +434,7 @@ namespace PodFilterDownloader
 
             foreach (ListViewItem item in lvFilters.Items)
             {
-                if (item.SubItems[1].Text == @"Update available")
+                if (item.SubItems[1].Text == rm.GetString("frmMain_Update_available"))
                 {
                     DownloadFilterFile(item.Text, _data[item.Text].GetKeyData("download_url").Value, _data[item.Text].GetKeyData("author").Value, true);
 
@@ -491,19 +508,19 @@ namespace PodFilterDownloader
         {
             if (!rbInstalled.Checked)
             {
-                MessageBox.Show(@"Please check the installed radio button", @"Feature not available",
+                MessageBox.Show(rm.GetString("frmMain_Please_check_the_installed_radio_button"), rm.GetString("frmMain_Feature_not_available"),
                     MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
             if (lvFilters.SelectedItems.Count == 0)
             {
-                MessageBox.Show(@"Please select first some filter in the listview!", @"Error", MessageBoxButtons.OK,
+                MessageBox.Show(rm.GetString("frmMain_No_Filter_Selected_In_LV"), rm.GetString("frmMain_Error"), MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
 
-            if (MessageBox.Show(@"Are you sure you want to remove file: " + lvFilters.SelectedItems[0].Text, @"Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show($"{rm.GetString("frmMain_Are_you_sure_you_want_to_remove_file")}: {lvFilters.SelectedItems[0].Text}", rm.GetString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 File.Delete($"{txtPodInstallationLoc.Text}\\filter\\{lvFilters.SelectedItems[0].Text}.filter");
 
