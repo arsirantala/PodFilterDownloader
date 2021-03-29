@@ -83,7 +83,7 @@ namespace PodFilterDownloader
 
                     btnInstallSelected.Enabled = true;
                     btnBrowsePoDInstallLoc.Enabled = true;
-                    DownloadFileFinal(author, filtername);
+                    DownloadFileFinal(author, filtername, silent);
                     return;
                 }
             }
@@ -102,11 +102,11 @@ namespace PodFilterDownloader
                     wc.DownloadFile(new Uri(url), $"{Path.GetTempPath()}\\{author}_{filtername}_item.filter");
                 }
 
-                DownloadFileFinal(author, filtername);
+                DownloadFileFinal(author, filtername, silent);
             }
         }
 
-        private void DownloadFileFinal(string author, string filtername)
+        private void DownloadFileFinal(string author, string filtername, bool silent)
         {
             if (author == "")
             {
@@ -162,10 +162,11 @@ namespace PodFilterDownloader
             btnInstallSelected.Enabled = true;
             btnBrowsePoDInstallLoc.Enabled = true;
 
-            var temp = lvFilters.FindItemWithText(filtername);
-            lvFilters.Items.Remove(temp);
-
-            timer.Enabled = true;
+            if (!silent)
+            {
+                var temp = lvFilters.FindItemWithText(filtername);
+                lvFilters.Items.Remove(temp);
+            }
         }
 
         private void DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -176,7 +177,7 @@ namespace PodFilterDownloader
 
             //}
 
-            DownloadFileFinal("", "");
+            DownloadFileFinal("", "", false);
         }
 
         private void btnBrowsePoDInstallLoc_Click(object sender, EventArgs e)
@@ -353,11 +354,6 @@ namespace PodFilterDownloader
         {
             timer.Enabled = false;
 
-            // Check the ETag values for the filters in servers, so that filters which have been changed can be indicated that there might be new version available
-
-            // TODO in first start phase, when no etags have been yet written to the ini file, check the already downloaded filters and compare the lengths of those to the 
-            // lengths at servers
-
             if (txtPodInstallationLoc.Text.Length > 0 && 
                 (txtPodInstallationLoc.Text.Length > 0 && Directory.Exists(txtPodInstallationLoc.Text)))
             {
@@ -450,6 +446,11 @@ namespace PodFilterDownloader
                                     lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
                                         rm.GetString("frmMain_Update_available");
                                     updatesFound = true;
+                                }
+                                else
+                                {
+                                    lvFilters.FindItemWithText(filter.SectionName).SubItems[1].Text =
+                                        rm.GetString("frmMain_Installed");
                                 }
                             }
                         }
@@ -546,6 +547,7 @@ namespace PodFilterDownloader
                 DownloadFilterFile(lvFilters.SelectedItems[0].Text, 
                     _data[lvFilters.SelectedItems[0].Text].GetKeyData("download_url").Value, 
                     _data[lvFilters.SelectedItems[0].Text].GetKeyData("author").Value, false);
+                timer.Enabled = true;
             }
         }
 
