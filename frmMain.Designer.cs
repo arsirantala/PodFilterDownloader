@@ -1,4 +1,4 @@
-﻿namespace PodFilterDownloader
+﻿namespace IxothPodFilterDownloader
 {
     partial class frmMain
     {
@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.gbOuter = new System.Windows.Forms.GroupBox();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.btnRemoveSelected = new System.Windows.Forms.Button();
             this.btnMoreInfoOnSelectedFilter = new System.Windows.Forms.Button();
             this.btnInstallSelected = new System.Windows.Forms.Button();
@@ -51,7 +52,6 @@
             this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
-            this.btnCancel = new System.Windows.Forms.Button();
             this.gbOuter.SuspendLayout();
             this.gbPoDInstallLocation.SuspendLayout();
             this.gbInstalled_Available.SuspendLayout();
@@ -78,6 +78,18 @@
             this.gbOuter.TabIndex = 0;
             this.gbOuter.TabStop = false;
             this.gbOuter.Text = "Click on button to download PoD filter";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Enabled = false;
+            this.btnCancel.Location = new System.Drawing.Point(444, 559);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(182, 35);
+            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnRemoveSelected
             // 
@@ -212,7 +224,7 @@
             this.rbInstalled.Location = new System.Drawing.Point(20, 29);
             this.rbInstalled.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbInstalled.Name = "rbInstalled";
-            this.rbInstalled.Size = new System.Drawing.Size(92, 24);
+            this.rbInstalled.Size = new System.Drawing.Size(91, 24);
             this.rbInstalled.TabIndex = 0;
             this.rbInstalled.TabStop = true;
             this.rbInstalled.Text = "Installed";
@@ -233,15 +245,13 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemFile,
             this.toolStripMenuItemHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(1113, 33);
+            this.menuStrip1.Size = new System.Drawing.Size(1113, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -250,13 +260,13 @@
             this.toolStripMenuItemFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemFileExit});
             this.toolStripMenuItemFile.Name = "toolStripMenuItemFile";
-            this.toolStripMenuItemFile.Size = new System.Drawing.Size(54, 29);
+            this.toolStripMenuItemFile.Size = new System.Drawing.Size(46, 24);
             this.toolStripMenuItemFile.Text = "File";
             // 
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(141, 34);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(116, 26);
             this.toolStripMenuItemFileExit.Text = "Exit";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
@@ -265,13 +275,13 @@
             this.toolStripMenuItemHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemHelpAbout});
             this.toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
-            this.toolStripMenuItemHelp.Size = new System.Drawing.Size(65, 29);
+            this.toolStripMenuItemHelp.Size = new System.Drawing.Size(55, 24);
             this.toolStripMenuItemHelp.Text = "Help";
             // 
             // toolStripMenuItemHelpAbout
             // 
             this.toolStripMenuItemHelpAbout.Name = "toolStripMenuItemHelpAbout";
-            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(176, 34);
+            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(142, 26);
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
@@ -280,17 +290,6 @@
             this.timer.Enabled = true;
             this.timer.Interval = 250;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Enabled = false;
-            this.btnCancel.Location = new System.Drawing.Point(444, 559);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(182, 35);
-            this.btnCancel.TabIndex = 9;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // frmMain
             // 

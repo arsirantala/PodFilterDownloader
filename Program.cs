@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace PodFilterDownloader
+namespace IxothPodFilterDownloader
 {
     static class Program
     {

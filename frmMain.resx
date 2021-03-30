@@ -729,4 +729,7 @@
   <data name="frmMain_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="frmMain_Click_Please_use_checkboxes_to_select_some_filtes_you_want_to_update_first" xml:space="preserve">
+    <value>Please use checkboxes to select some filtes you want to update first</value>
+  </data>
 </root>
