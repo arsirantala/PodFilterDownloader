@@ -726,4 +726,7 @@
   <data name="frmMain_Filter" xml:space="preserve">
     <value>Filter</value>
   </data>
+  <data name="frmMain_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

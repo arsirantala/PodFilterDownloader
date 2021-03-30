@@ -262,6 +262,7 @@ namespace PodFilterDownloader
             toolStripMenuItemHelp.Text = rm.GetString("frmMain_Help_Menu");
             toolStripMenuItemFileExit.Text = rm.GetString("frmMain_File_Exit_Menuitem");
             toolStripMenuItemHelpAbout.Text = rm.GetString("frmMain_About");
+            btnCancel.Text = rm.GetString("frmMain_Cancel");
         }
 
         private void UpdateListview()

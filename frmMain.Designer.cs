@@ -51,6 +51,7 @@
             this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.btnCancel = new System.Windows.Forms.Button();
             this.gbOuter.SuspendLayout();
             this.gbPoDInstallLocation.SuspendLayout();
             this.gbInstalled_Available.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // gbOuter
             // 
+            this.gbOuter.Controls.Add(this.btnCancel);
             this.gbOuter.Controls.Add(this.btnRemoveSelected);
             this.gbOuter.Controls.Add(this.btnMoreInfoOnSelectedFilter);
             this.gbOuter.Controls.Add(this.btnInstallSelected);
@@ -68,11 +70,11 @@
             this.gbOuter.Controls.Add(this.gbPoDInstallLocation);
             this.gbOuter.Controls.Add(this.gbInstalled_Available);
             this.gbOuter.Controls.Add(this.lvFilters);
-            this.gbOuter.Location = new System.Drawing.Point(29, 34);
+            this.gbOuter.Location = new System.Drawing.Point(33, 42);
             this.gbOuter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbOuter.Name = "gbOuter";
             this.gbOuter.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbOuter.Size = new System.Drawing.Size(933, 613);
+            this.gbOuter.Size = new System.Drawing.Size(1050, 766);
             this.gbOuter.TabIndex = 0;
             this.gbOuter.TabStop = false;
             this.gbOuter.Text = "Click on button to download PoD filter";
@@ -80,10 +82,10 @@
             // btnRemoveSelected
             // 
             this.btnRemoveSelected.Enabled = false;
-            this.btnRemoveSelected.Location = new System.Drawing.Point(34, 358);
+            this.btnRemoveSelected.Location = new System.Drawing.Point(38, 448);
             this.btnRemoveSelected.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnRemoveSelected.Name = "btnRemoveSelected";
-            this.btnRemoveSelected.Size = new System.Drawing.Size(197, 30);
+            this.btnRemoveSelected.Size = new System.Drawing.Size(222, 38);
             this.btnRemoveSelected.TabIndex = 3;
             this.btnRemoveSelected.Text = "Remove selected";
             this.btnRemoveSelected.UseVisualStyleBackColor = true;
@@ -92,10 +94,10 @@
             // btnMoreInfoOnSelectedFilter
             // 
             this.btnMoreInfoOnSelectedFilter.Enabled = false;
-            this.btnMoreInfoOnSelectedFilter.Location = new System.Drawing.Point(264, 358);
+            this.btnMoreInfoOnSelectedFilter.Location = new System.Drawing.Point(297, 448);
             this.btnMoreInfoOnSelectedFilter.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnMoreInfoOnSelectedFilter.Name = "btnMoreInfoOnSelectedFilter";
-            this.btnMoreInfoOnSelectedFilter.Size = new System.Drawing.Size(197, 30);
+            this.btnMoreInfoOnSelectedFilter.Size = new System.Drawing.Size(222, 38);
             this.btnMoreInfoOnSelectedFilter.TabIndex = 4;
             this.btnMoreInfoOnSelectedFilter.Text = "More info on selected filter";
             this.btnMoreInfoOnSelectedFilter.UseVisualStyleBackColor = true;
@@ -104,10 +106,10 @@
             // btnInstallSelected
             // 
             this.btnInstallSelected.Enabled = false;
-            this.btnInstallSelected.Location = new System.Drawing.Point(485, 358);
-            this.btnInstallSelected.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnInstallSelected.Location = new System.Drawing.Point(546, 448);
+            this.btnInstallSelected.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnInstallSelected.Name = "btnInstallSelected";
-            this.btnInstallSelected.Size = new System.Drawing.Size(162, 28);
+            this.btnInstallSelected.Size = new System.Drawing.Size(182, 35);
             this.btnInstallSelected.TabIndex = 5;
             this.btnInstallSelected.Text = "Install selected";
             this.btnInstallSelected.UseVisualStyleBackColor = true;
@@ -115,19 +117,19 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(34, 416);
+            this.progressBar.Location = new System.Drawing.Point(38, 503);
             this.progressBar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(873, 43);
+            this.progressBar.Size = new System.Drawing.Size(982, 34);
             this.progressBar.TabIndex = 7;
             // 
             // btnDownloadUpdatedFilters
             // 
             this.btnDownloadUpdatedFilters.Enabled = false;
-            this.btnDownloadUpdatedFilters.Location = new System.Drawing.Point(676, 358);
-            this.btnDownloadUpdatedFilters.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnDownloadUpdatedFilters.Location = new System.Drawing.Point(760, 448);
+            this.btnDownloadUpdatedFilters.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnDownloadUpdatedFilters.Name = "btnDownloadUpdatedFilters";
-            this.btnDownloadUpdatedFilters.Size = new System.Drawing.Size(231, 28);
+            this.btnDownloadUpdatedFilters.Size = new System.Drawing.Size(260, 35);
             this.btnDownloadUpdatedFilters.TabIndex = 6;
             this.btnDownloadUpdatedFilters.Text = "Download updates";
             this.btnDownloadUpdatedFilters.UseVisualStyleBackColor = true;
@@ -135,10 +137,10 @@
             // 
             // btnRefresh
             // 
-            this.btnRefresh.Location = new System.Drawing.Point(807, 68);
-            this.btnRefresh.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnRefresh.Location = new System.Drawing.Point(908, 85);
+            this.btnRefresh.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(100, 28);
+            this.btnRefresh.Size = new System.Drawing.Size(112, 35);
             this.btnRefresh.TabIndex = 1;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
@@ -148,21 +150,21 @@
             // 
             this.gbPoDInstallLocation.Controls.Add(this.btnBrowsePoDInstallLoc);
             this.gbPoDInstallLocation.Controls.Add(this.txtPodInstallationLoc);
-            this.gbPoDInstallLocation.Location = new System.Drawing.Point(34, 500);
+            this.gbPoDInstallLocation.Location = new System.Drawing.Point(38, 625);
             this.gbPoDInstallLocation.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.gbPoDInstallLocation.Name = "gbPoDInstallLocation";
             this.gbPoDInstallLocation.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.gbPoDInstallLocation.Size = new System.Drawing.Size(873, 82);
+            this.gbPoDInstallLocation.Size = new System.Drawing.Size(982, 102);
             this.gbPoDInstallLocation.TabIndex = 8;
             this.gbPoDInstallLocation.TabStop = false;
             this.gbPoDInstallLocation.Text = "PoD install location";
             // 
             // btnBrowsePoDInstallLoc
             // 
-            this.btnBrowsePoDInstallLoc.Location = new System.Drawing.Point(397, 30);
+            this.btnBrowsePoDInstallLoc.Location = new System.Drawing.Point(447, 38);
             this.btnBrowsePoDInstallLoc.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnBrowsePoDInstallLoc.Name = "btnBrowsePoDInstallLoc";
-            this.btnBrowsePoDInstallLoc.Size = new System.Drawing.Size(75, 30);
+            this.btnBrowsePoDInstallLoc.Size = new System.Drawing.Size(84, 38);
             this.btnBrowsePoDInstallLoc.TabIndex = 1;
             this.btnBrowsePoDInstallLoc.Text = "...";
             this.btnBrowsePoDInstallLoc.UseVisualStyleBackColor = true;
@@ -171,21 +173,21 @@
             // txtPodInstallationLoc
             // 
             this.txtPodInstallationLoc.Enabled = false;
-            this.txtPodInstallationLoc.Location = new System.Drawing.Point(13, 32);
+            this.txtPodInstallationLoc.Location = new System.Drawing.Point(15, 40);
             this.txtPodInstallationLoc.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.txtPodInstallationLoc.Name = "txtPodInstallationLoc";
-            this.txtPodInstallationLoc.Size = new System.Drawing.Size(353, 22);
+            this.txtPodInstallationLoc.Size = new System.Drawing.Size(397, 26);
             this.txtPodInstallationLoc.TabIndex = 0;
             // 
             // gbInstalled_Available
             // 
             this.gbInstalled_Available.Controls.Add(this.rbAvailable);
             this.gbInstalled_Available.Controls.Add(this.rbInstalled);
-            this.gbInstalled_Available.Location = new System.Drawing.Point(34, 36);
-            this.gbInstalled_Available.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gbInstalled_Available.Location = new System.Drawing.Point(38, 45);
+            this.gbInstalled_Available.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.gbInstalled_Available.Name = "gbInstalled_Available";
-            this.gbInstalled_Available.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.gbInstalled_Available.Size = new System.Drawing.Size(300, 60);
+            this.gbInstalled_Available.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.gbInstalled_Available.Size = new System.Drawing.Size(338, 75);
             this.gbInstalled_Available.TabIndex = 0;
             this.gbInstalled_Available.TabStop = false;
             this.gbInstalled_Available.Text = "Show filters based of";
@@ -193,10 +195,10 @@
             // rbAvailable
             // 
             this.rbAvailable.AutoSize = true;
-            this.rbAvailable.Location = new System.Drawing.Point(139, 23);
-            this.rbAvailable.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbAvailable.Location = new System.Drawing.Point(156, 29);
+            this.rbAvailable.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbAvailable.Name = "rbAvailable";
-            this.rbAvailable.Size = new System.Drawing.Size(86, 21);
+            this.rbAvailable.Size = new System.Drawing.Size(97, 24);
             this.rbAvailable.TabIndex = 1;
             this.rbAvailable.Text = "Available";
             this.rbAvailable.UseVisualStyleBackColor = true;
@@ -207,10 +209,10 @@
             this.rbInstalled.AutoSize = true;
             this.rbInstalled.Checked = true;
             this.rbInstalled.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.rbInstalled.Location = new System.Drawing.Point(18, 23);
-            this.rbInstalled.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbInstalled.Location = new System.Drawing.Point(20, 29);
+            this.rbInstalled.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.rbInstalled.Name = "rbInstalled";
-            this.rbInstalled.Size = new System.Drawing.Size(80, 21);
+            this.rbInstalled.Size = new System.Drawing.Size(92, 24);
             this.rbInstalled.TabIndex = 0;
             this.rbInstalled.TabStop = true;
             this.rbInstalled.Text = "Installed";
@@ -220,25 +222,26 @@
             // lvFilters
             // 
             this.lvFilters.HideSelection = false;
-            this.lvFilters.Location = new System.Drawing.Point(34, 119);
+            this.lvFilters.Location = new System.Drawing.Point(38, 149);
             this.lvFilters.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.lvFilters.MultiSelect = false;
             this.lvFilters.Name = "lvFilters";
-            this.lvFilters.Size = new System.Drawing.Size(872, 219);
+            this.lvFilters.Size = new System.Drawing.Size(980, 273);
             this.lvFilters.TabIndex = 2;
             this.lvFilters.UseCompatibleStateImageBehavior = false;
             this.lvFilters.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lvFilters_ItemSelectionChanged);
             // 
             // menuStrip1
             // 
+            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemFile,
             this.toolStripMenuItemHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(989, 28);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(6, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1113, 33);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -247,13 +250,13 @@
             this.toolStripMenuItemFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemFileExit});
             this.toolStripMenuItemFile.Name = "toolStripMenuItemFile";
-            this.toolStripMenuItemFile.Size = new System.Drawing.Size(46, 24);
+            this.toolStripMenuItemFile.Size = new System.Drawing.Size(54, 29);
             this.toolStripMenuItemFile.Text = "File";
             // 
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(116, 26);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(141, 34);
             this.toolStripMenuItemFileExit.Text = "Exit";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
@@ -262,13 +265,13 @@
             this.toolStripMenuItemHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemHelpAbout});
             this.toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
-            this.toolStripMenuItemHelp.Size = new System.Drawing.Size(55, 24);
+            this.toolStripMenuItemHelp.Size = new System.Drawing.Size(65, 29);
             this.toolStripMenuItemHelp.Text = "Help";
             // 
             // toolStripMenuItemHelpAbout
             // 
             this.toolStripMenuItemHelpAbout.Name = "toolStripMenuItemHelpAbout";
-            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(142, 26);
+            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(176, 34);
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
@@ -278,11 +281,22 @@
             this.timer.Interval = 250;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Enabled = false;
+            this.btnCancel.Location = new System.Drawing.Point(444, 559);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(182, 35);
+            this.btnCancel.TabIndex = 9;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(989, 666);
+            this.ClientSize = new System.Drawing.Size(1113, 832);
             this.Controls.Add(this.gbOuter);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -330,6 +344,7 @@
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.Button btnInstallSelected;
         private System.Windows.Forms.Button btnRemoveSelected;
+        private System.Windows.Forms.Button btnCancel;
     }
 }
 
