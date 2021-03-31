@@ -1,4 +1,4 @@
-﻿namespace IxothPodFilterDownloader
+﻿namespace IxothPodFilterDownloader.Models
 {
     public class FilterContentDataModel
     {

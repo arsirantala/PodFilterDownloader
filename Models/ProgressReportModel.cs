@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace IxothPodFilterDownloader
+﻿namespace IxothPodFilterDownloader.Models
 {
     public class ProgressReportModel
     {

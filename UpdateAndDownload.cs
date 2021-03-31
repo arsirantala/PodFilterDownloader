@@ -4,11 +4,19 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using IniParser.Model;
+using IxothPodFilterDownloader.Models;
 
 namespace IxothPodFilterDownloader
 {
     public static class UpdateAndDownload
     {
+        /// <summary>
+        /// Get ETag and content-length for the installed PoD filters in the servers
+        /// </summary>
+        /// <param name="progress"></param>
+        /// <param name="iniData"></param>
+        /// <param name="poDInstallLocation"></param>
+        /// <returns></returns>
         public static async Task<List<FilterHttpHeaderDataModel>> RunGetFilterHttpHeadersInParallelAsync(
             IProgress<ProgressReportModel> progress, IniData iniData, string poDInstallLocation)
         {
@@ -27,12 +35,11 @@ namespace IxothPodFilterDownloader
 
             await Task.Run(() =>
             {
-                Parallel.ForEach<string>(sources, (filter) =>
+                Parallel.ForEach(sources, (filter) =>
                 {
                     FilterHttpHeaderDataModel results = GetFilterHttpHeaders(iniData, filter);
                     output.Add(results);
 
-                    //report.SitesDownloaded = output;
                     report.PercentageComplete = (output.Count * 100) / sources.Count;
                     progress.Report(report);
                 });
@@ -66,12 +73,11 @@ namespace IxothPodFilterDownloader
 
             await Task.Run(() =>
             {
-                Parallel.ForEach<string>(wantedFilters, (filter) =>
+                Parallel.ForEach(wantedFilters, (filter) =>
                 {
                     FilterContentDataModel results = GetFilterContent(iniData, filter);
                     output.Add(results);
 
-                    //report.SitesDownloaded = output;
                     report.PercentageComplete = (output.Count * 100) / wantedFilters.Count;
                     progress.Report(report);
                 });
