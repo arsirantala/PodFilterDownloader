@@ -287,7 +287,6 @@
             // 
             // timer
             // 
-            this.timer.Enabled = true;
             this.timer.Interval = 250;
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
             // 
@@ -308,6 +307,7 @@
             this.Text = "Ixoth\'s PoD filter Downloader";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmMain_FormClosed);
             this.Load += new System.EventHandler(this.frmMain_Load);
+            this.Shown += new System.EventHandler(this.frmMain_Shown);
             this.gbOuter.ResumeLayout(false);
             this.gbPoDInstallLocation.ResumeLayout(false);
             this.gbPoDInstallLocation.PerformLayout();

@@ -674,5 +674,13 @@ namespace IxothPodFilterDownloader
         {
             _cts.Cancel();
         }
+
+        private void frmMain_Shown(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+
+            // TODO do the timer logic in here and later the timer logic will be done only when user
+            // presses the refresh button (at later time remove timer entirely)
+        }
     }
 }
