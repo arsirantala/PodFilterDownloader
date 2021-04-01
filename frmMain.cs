@@ -22,6 +22,7 @@ namespace IxothPodFilterDownloader
         private readonly FileIniDataParser _parser = new FileIniDataParser();
         private readonly ResourceManager _rm = new ResourceManager(typeof(frmMain));
         readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private FileSystemWatcher _fsw;
 
         public frmMain()
         {
@@ -236,6 +237,31 @@ namespace IxothPodFilterDownloader
             btnRefresh.Enabled = true;
         }
 
+        private void PersistInstalledFiltersSha256AndContentLength(string filtername)
+        {
+            if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter"))
+            {
+                PersistInstalledFiltersSha256AndContentLengthHelper(filtername);
+            }
+        }
+
+        private void PersistInstalledFiltersSha256AndContentLengthHelper(string filtername)
+        {
+            string temp = filtername;
+            if (!filtername.ToLower().Contains(".filter"))
+            {
+                temp += ".filter";
+            }
+            var test = _data[filtername.Replace(".filter", "")].GetKeyData("installed_content_length");
+            test.Value = File.ReadAllText($"{txtPodInstallationLoc.Text}\\filter\\{temp}").Length.ToString();
+            _data[filtername].SetKeyData(test);
+
+            test = _data[filtername.Replace(".filter", "")].GetKeyData("installed_sha256");
+            test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{temp}"));
+            _data[filtername].SetKeyData(test);
+            _parser.WriteFile(_configFile, _data);
+        }
+
         private void PersistInstalledFiltersSha256AndContentLength()
         {
             if (txtPodInstallationLoc.Text.Length > 0 &&
@@ -245,19 +271,11 @@ namespace IxothPodFilterDownloader
                 {
                     if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
                     {
-                        var test = _data[filter.SectionName].GetKeyData("installed_content_length");
-                        test.Value = File.ReadAllText($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter").Length.ToString();
-                        _data[filter.SectionName].SetKeyData(test);
-
-                        test = _data[filter.SectionName].GetKeyData("installed_sha256");
-                        test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"));
-                        _data[filter.SectionName].SetKeyData(test);
-                        _parser.WriteFile(_configFile, _data);
+                        PersistInstalledFiltersSha256AndContentLengthHelper(filter.SectionName);
                     }
                 }
             }
         }
-
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             btnRefresh.Enabled = false;
@@ -404,8 +422,47 @@ namespace IxothPodFilterDownloader
 
             timer.Enabled = true;
 
+            // Use file system watcher to monitor if filter files are added to the filter directory, so we can persist
+            // a) the sha256 value of new installed filter file and b) content length of it.
+            // Can also get the server's etag and content length of the filter and persist those as well (eventually getting rid of timer)
+            // Have to keep mind of parallel downloading tasks as they are usng inifile's write method, so that persisting of above info
+            // is still thread safe
+            if (Directory.Exists($"{txtPodInstallationLoc.Text}\\filter"))
+            {
+                FileSystemWatcher _fsw = new FileSystemWatcher($"{txtPodInstallationLoc.Text}\\filter", "*.filter")
+                {
+                    IncludeSubdirectories = false,
+                    NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size,
+                    EnableRaisingEvents = true
+                };
+                _fsw.Changed += fsw_Changed;
+                _fsw.Deleted += fsw_Deleted;
+            }
+
             // TODO do the timer logic in here and later the timer logic will be done only when user
             // presses the refresh button (at later time remove timer entirely)
+        }
+
+        private void fsw_Deleted(object sender, FileSystemEventArgs e)
+        {
+            if (rbInstalled.Checked)
+            {
+                if (lvFilters.Items.Count > 0)
+                {
+                    //// TODO fix problem: System.InvalidOperationException: 'Cross-thread operation not valid: Control 'lvFilters' accessed from a thread other than the thread it was created on.'
+
+                    //ListViewItem listViewItem;
+                    //listViewItem = lvFilters.FindItemWithText(e.Name);
+                    //lvFilters.Items.Remove(listViewItem);
+
+                    //UpdateButtonStates();
+                }
+            }
+        }
+
+        private void fsw_Changed(object sender, FileSystemEventArgs e)
+        {
+            PersistInstalledFiltersSha256AndContentLength(e.Name.Replace(".filter", ""));
         }
 
         private async void InstallSelected(List<string> filters)
