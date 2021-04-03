@@ -10,6 +10,103 @@ namespace IxothPodFilterDownloader
 {
     public static class UpdateAndDownload
     {
+        public static bool ContentLengthCheck(string filter, IniData _data)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(_data[filter].GetKeyData("server_content_length").Value))
+            {
+                return false;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(_data[filter].GetKeyData("installed_content_length").Value))
+                {
+                    return false;
+                }
+                else
+                {
+                    if (_data[filter].GetKeyData("server_content_length").Value !=
+                        _data[filter].GetKeyData("installed_content_length").Value)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool Sha256Check(string filter, IniData _data)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(_data[filter].GetKeyData("downloaded_sha256").Value))
+            {
+                // Filter has no ETags or downloaded sha256, probably was copied directly to filter directory
+                return false;
+            }
+            else
+            {
+                // Filter has no Etags, check with sha256s
+                if (string.IsNullOrEmpty(_data[filter].GetKeyData("installed_sha256").Value))
+                {
+                    return false;
+                }
+                else
+                {
+                    if (_data[filter].GetKeyData("downloaded_sha256").Value !=
+                        _data[filter].GetKeyData("installed_sha256").Value)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool ETagCheck(string filter, IniData _data)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return false;
+            }
+
+            // Filter has ETags
+            if (string.IsNullOrEmpty(_data[filter].GetKeyData("downloaded_etag").Value))
+            {
+                return false;
+            }
+            else
+            {
+                if (_data[filter].GetKeyData("server_etag").Value !=
+                    _data[filter].GetKeyData("downloaded_etag").Value)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool HasEtags(string filter, IniData _data)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return false;
+            }
+
+            return !string.IsNullOrEmpty(_data[filter].GetKeyData("downloaded_etag").Value) &&
+                   !string.IsNullOrEmpty(_data[filter].GetKeyData("server_etag").Value);
+        }
+
         /// <summary>
         /// Get ETag and content-length for the installed PoD filters in the servers
         /// </summary>

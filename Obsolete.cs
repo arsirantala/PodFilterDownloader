@@ -143,5 +143,57 @@
         //{
         //    progressBar.Value = e.ProgressPercentage;
         //}
+
+        /*
+         * if (string.IsNullOrEmpty(_data[lvFiltersItem.Text].GetKeyData("server_etag").Value) &&
+                                            string.IsNullOrEmpty(_data[lvFiltersItem.Text].GetKeyData("downloaded_etag").Value))
+                {
+                    // Not all servers support etag, use then the content-length instead (not very good approach!)
+                    if (!string.IsNullOrEmpty(_data[lvFiltersItem.Text].GetKeyData("downloaded_sha256").Value) &&
+                        !string.IsNullOrEmpty(_data[lvFiltersItem.Text].GetKeyData("installed_sha256").Value))
+                    {
+                        if (_data[lvFiltersItem.Text].GetKeyData("downloaded_sha256").Value !=
+                            _data[lvFiltersItem.Text].GetKeyData("installed_sha256").Value)
+                        {
+                            lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
+                                _rm.GetString("frmMain_Update_available");
+                            updatesFound = true;
+                        }
+                    }
+                    else
+                    {
+                        if (!string.IsNullOrEmpty(_data[lvFiltersItem.Text].GetKeyData("server_content_length").Value) &&
+                            !string.IsNullOrEmpty(_data[lvFiltersItem.Text].GetKeyData("downloaded_content_length").Value))
+                        {
+                            if (_data[lvFiltersItem.Text].GetKeyData("server_content_length").Value !=
+                                _data[lvFiltersItem.Text].GetKeyData("downloaded_content_length").Value)
+                            {
+                                lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
+                                    _rm.GetString("frmMain_Update_available");
+                                updatesFound = true;
+                            }
+                        }
+                        else
+                        {
+                            Debug.Write("oops");
+                        }
+                    }
+                }
+                else
+                {
+                    if (_data[lvFiltersItem.Text].GetKeyData("server_etag").Value !=
+                        _data[lvFiltersItem.Text].GetKeyData("downloaded_etag").Value)
+                    {
+                        lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
+                            _rm.GetString("frmMain_Update_available");
+                        updatesFound = true;
+                    }
+                    else
+                    {
+                        lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
+                            _rm.GetString("frmMain_Installed");
+                    }
+                }
+         */
     }
 }
