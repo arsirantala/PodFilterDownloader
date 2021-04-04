@@ -30,94 +30,23 @@ namespace IxothPodFilterDownloader
 
         private void btnBrowsePoDInstallLoc_Click(object sender, EventArgs e)
         {
-            var browserDialog = new FolderBrowserDialog {SelectedPath = txtPodInstallationLoc.Text.Trim()};
+            var browserDialog = new FolderBrowserDialog { SelectedPath = txtPodInstallationLoc.Text.Trim() };
 
             var result = browserDialog.ShowDialog();
 
             if (result == DialogResult.OK)
             {
                 txtPodInstallationLoc.Text = browserDialog.SelectedPath.Trim();
-                UpdateListview();
+                Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
+                    btnDownloadUpdatedFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter);
 
-                refreshContent();
+                RefreshContent();
             }
         }
 
         private void toolStripMenuItemFileExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
-        }
-
-        /// <summary>
-        /// Populate the listview content
-        /// </summary>
-        private void UpdateListview()
-        {
-            if (lvFilters.InvokeRequired)
-            {
-                // TODO Complete this properly
-                MessageBox.Show("Invoke required with listview update!", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
-            }
-
-            lvFilters.BeginUpdate();
-            lvFilters.Clear();
-            lvFilters.View = View.Details;
-            lvFilters.FullRowSelect = true;
-            lvFilters.CheckBoxes = rbInstalled.Checked;
-            lvFilters.Columns.Add(_rm.GetString("frmMain_Filter"), -1, HorizontalAlignment.Left);
-            lvFilters.Columns.Add(_rm.GetString("frmMain_State"), -1, HorizontalAlignment.Left);
-            lvFilters.Columns.Add(_rm.GetString("frmMain_Description"), -1, HorizontalAlignment.Left);
-
-            foreach (var section in _data.Sections)
-            {
-                bool filterExists =
-                    File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{section.SectionName}.filter");
-                
-                if ((rbInstalled.Checked && filterExists) || (rbAvailable.Checked && !filterExists))
-                {
-                    // Find group or create a new group
-                    var found = false;
-                    ListViewGroup lvg = null;
-                    foreach (var grp in lvFilters.Groups.Cast<ListViewGroup>().Where(grp =>
-                        grp.ToString() == _data[section.SectionName].GetKeyData("author").Value))
-                    {
-                        found = true;
-                        lvg = grp;
-                        break;
-                    }
-
-                    if (!found)
-                    {
-                        // Group not found, create
-                        lvg = new ListViewGroup(_data[section.SectionName].GetKeyData("author").Value);
-                        lvFilters.Groups.Add(lvg);
-                    }
-
-                    // Add ListViewItem
-                    lvFilters.Items.Add(new ListViewItem(
-                        new[] { section.SectionName, filterExists ? _rm.GetString("frmMain_Installed") : _rm.GetString("frmMain_Available"),
-                            _data[section.SectionName].GetKeyData("description").Value }, lvg));
-                    lvFilters.Items[lvFilters.Items.Count - 1].Tag = section.SectionName;
-                    lvFilters.Items[lvFilters.Items.Count - 1].Checked = bool.Parse(_data[section.SectionName].GetKeyData("selected_for_updates").Value);
-                }
-            }
-
-            if (lvFilters.Items.Count == 0)
-            {
-                lvFilters.Columns[0].Width = lvFilters.Columns[1].Width = lvFilters.Columns[2].Width = 200;
-                btnInstallSelected.Enabled = btnDownloadUpdatedFilters.Enabled = btnRemoveSelected.Enabled =
-                    btnMoreInfoOnSelectedFilter.Enabled = btnInstallSelected.Enabled = false;
-            }
-            else
-            {
-                lvFilters.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                lvFilters.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            }
-
-            lvFilters.EndUpdate();
         }
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
@@ -138,10 +67,9 @@ namespace IxothPodFilterDownloader
 
         private void toolStripMenuItemHelpAbout_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(
-                // ReSharper disable once LocalizableElement
-                $"{_rm.GetString("frmMain_About_Message")}{Environment.NewLine}{_rm.GetString("frmMain_Version")}: {Application.ProductVersion}{Environment.NewLine}{Environment.NewLine}{_rm.GetString("frmMain_Copyright")} 2021{Environment.NewLine}{_rm.GetString("frmMain_AllRightsReserved")}",
-                _rm.GetString("frmMain_About"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+            frmAbout about = new frmAbout();
+            about.ShowDialog(this);
+            about.Dispose();
         }
 
         private void btnMoreInfoOnSelectedFilter_Click(object sender, EventArgs e)
@@ -161,125 +89,13 @@ namespace IxothPodFilterDownloader
             progressBar.Value = e.PercentageComplete;
         }
 
-        private bool CheckIfInstalledFiltersHasUpdates()
-        {
-            bool updatesFound = false;
-
-            // Compare etag of prev downloaded and server's etag and if they both exist and are different: update is avail for filter
-            //
-            // If no Etags were found (downloaded and server's), then compare instead content lengths and sha256 values instead -
-            // If sha256 value are found and content lengths, then compare those. If sha256 values and content lengths differ: update avail
-            foreach (ListViewItem lvFiltersItem in lvFilters.Items)
-            {
-                if (UpdateAndDownload.HasEtags(lvFiltersItem.Text, _data))
-                {
-                    if (UpdateAndDownload.ETagCheck(lvFiltersItem.Text, _data) && UpdateAndDownload.Sha256Check(lvFiltersItem.Text, _data) && UpdateAndDownload.ContentLengthCheck(lvFiltersItem.Text, _data))
-                    {
-                        lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
-                            _rm.GetString("frmMain_Update_available");
-                        updatesFound = true;
-                    }
-                    else
-                    {
-                        lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = _rm.GetString("frmMain_Installed");
-                    }
-                }
-                else
-                {
-                    if (UpdateAndDownload.Sha256Check(lvFiltersItem.Text, _data) && UpdateAndDownload.ContentLengthCheck(lvFiltersItem.Text, _data))
-                    {
-                        lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
-                            _rm.GetString("frmMain_Update_available");
-                        updatesFound = true;
-                    }
-                    else
-                    {
-                        lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = _rm.GetString("frmMain_Installed");
-                    }
-                }
-            }
-
-            return updatesFound;
-        }
-
-        /// <summary>
-        /// Persist the sha256 and content lengths of installed specified filter to the Configuration.ini file
-        /// </summary>
-        /// <param name="filtername">Name of the filter to be processed</param>
-        private void PersistInstalledFiltersSha256AndContentLength(string filtername)
-        {
-            if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filtername}.filter"))
-            {
-                PersistInstalledFiltersSha256AndContentLengthHelper(filtername);
-            }
-        }
-
-        /// <summary>
-        /// Helper method for PersistInstalledFiltersSha256AndContentLength and PersistInstalledFiltersSha256AndContentLength methods
-        /// </summary>
-        /// <param name="filtername">Filter name to be processed</param>
-        private void PersistInstalledFiltersSha256AndContentLengthHelper(string filtername)
-        {
-            string temp = filtername;
-            if (!filtername.ToLower().Contains(".filter"))
-            {
-                temp += ".filter";
-            }
-            var test = _data[filtername.Replace(".filter", "")].GetKeyData("installed_content_length");
-            test.Value = File.ReadAllText($"{txtPodInstallationLoc.Text}\\filter\\{temp}").Length.ToString();
-            _data[filtername].SetKeyData(test);
-
-            test = _data[filtername.Replace(".filter", "")].GetKeyData("installed_sha256");
-            test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{temp}"));
-            _data[filtername].SetKeyData(test);
-            _parser.WriteFile(_configFile, _data);
-        }
-
-        /// <summary>
-        /// Persist the sha256 and content lengths of installed filters to the Configuration.ini file
-        /// </summary>
-        private void PersistInstalledFiltersSha256AndContentLength()
-        {
-            if (txtPodInstallationLoc.Text.Length > 0 &&
-                Directory.Exists(txtPodInstallationLoc.Text))
-            {
-                foreach (var filter in _data.Sections)
-                {
-                    if (File.Exists($"{txtPodInstallationLoc.Text}\\filter\\{filter.SectionName}.filter"))
-                    {
-                        PersistInstalledFiltersSha256AndContentLengthHelper(filter.SectionName);
-                    }
-                }
-            }
-        }
-
-        private void refreshContent()
-        {
-            if (lvFilters.Items.Count == 0 || !rbInstalled.Checked)
-            {
-                btnRefresh.Enabled = true;
-                Debug.WriteLine("Empty listview!");
-                return;
-            }
-
-            PersistInstalledFiltersSha256AndContentLength();
-
-            PersistServerETagAndContentLengthOfInstalledFilters();
-
-            btnDownloadUpdatedFilters.Enabled = CheckIfInstalledFiltersHasUpdates();
-
-            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-            btnRefresh.Enabled = true;
-        }
-        
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             btnRefresh.Enabled = false;
 
             PersistServerETagAndContentLengthOfInstalledFilters();
 
-            refreshContent();
+            RefreshContent();
         }
 
         private async void PersistServerETagAndContentLengthOfInstalledFilters()
@@ -305,60 +121,43 @@ namespace IxothPodFilterDownloader
             }
         }
 
-        /// <summary>
-        /// Helper method for UpdateButtonStates to handle possible cross-thread issues
-        /// </summary>
-        /// <param name="button">Button control to handle</param>
-        /// <param name="state">Button state to updated to enabled property</param>
-        private void UpdateButtonStateWithInvokeIfNeeded(Button button, bool state)
-        {
-            if (button.InvokeRequired)
-                button.Invoke(new MethodInvoker(delegate
-                {
-                    button.Enabled = state;
-                }));
-            else
-            {
-                button.Enabled = state;
-            }
-        }
-
         private void UpdateButtonStates()
         {
             if (rbInstalled.Checked)
             {
                 if (lvFilters.SelectedItems.Count == 0)
                 {
-                    UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
-                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
                 }
                 else
                 {
-                    UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, true);
-                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, true);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
                 }
-                UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
+                Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
             }
             else
             {
                 if (lvFilters.SelectedItems.Count == 0)
                 {
-                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
-                    UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
                 }
                 else
                 {
-                    UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, true);
-                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, true);
+                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
                 }
 
-                UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
+                Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
             }
         }
 
         private void rbInstalled_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateListview();
+            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
+                btnDownloadUpdatedFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter);
 
             UpdateButtonStates();
         }
@@ -431,7 +230,8 @@ namespace IxothPodFilterDownloader
             }
 
             // Populate listview with installed filters
-            UpdateListview();
+            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
+                btnDownloadUpdatedFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter);
 
             // Localize the form
             rbAvailable.Text = _rm.GetString("frmMain_Available");
@@ -449,8 +249,8 @@ namespace IxothPodFilterDownloader
             toolStripMenuItemFileExit.Text = _rm.GetString("frmMain_File_Exit_Menuitem");
             toolStripMenuItemHelpAbout.Text = _rm.GetString("frmMain_About");
             btnCancel.Text = _rm.GetString("frmMain_Cancel");
-            
-            refreshContent();
+
+            RefreshContent();
         }
 
         private void fsw_Deleted(object sender, FileSystemEventArgs e)
@@ -468,16 +268,16 @@ namespace IxothPodFilterDownloader
 
                             if (lvFilters.SelectedItems.Count == 0)
                             {
-                                UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
-                                UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
+                                Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
+                                Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
                             }
                             else
                             {
-                                UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, true);
-                                UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
+                                Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, true);
+                                Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
                             }
 
-                            UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
+                            Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
                         }));
                     }
                 }
@@ -486,7 +286,8 @@ namespace IxothPodFilterDownloader
 
         private void fsw_Changed(object sender, FileSystemEventArgs e)
         {
-            PersistInstalledFiltersSha256AndContentLength(e.Name.Replace(".filter", ""));
+            Utils.PersistInstalledFiltersSha256AndContentLength(e.Name.Replace(".filter", ""), 
+                txtPodInstallationLoc.Text, _data, _parser, _configFile);
         }
 
         /// <summary>
@@ -520,7 +321,7 @@ namespace IxothPodFilterDownloader
                 _parser.WriteFile(_configFile, _data);
             }
 
-            PersistInstalledFiltersSha256AndContentLength();
+            Utils.PersistInstalledFiltersSha256AndContentLength(txtPodInstallationLoc.Text, _data, _parser, _configFile);
         }
 
         private void btnInstallSelected_Click(object sender, EventArgs e)
@@ -540,7 +341,7 @@ namespace IxothPodFilterDownloader
 
                 btnCancel.Enabled = false;
 
-                refreshContent();
+                RefreshContent();
             }
             else
             {
@@ -571,15 +372,35 @@ namespace IxothPodFilterDownloader
             btnCancel.Enabled = true;
 
             List<string> filters = (from ListViewItem lvFiltersItem in lvFilters.Items
-                where lvFiltersItem.SubItems[1].Text == _rm.GetString("frmMain_Update_available")
-                where lvFiltersItem.Checked
-                select lvFiltersItem.Text).ToList();
+                                    where lvFiltersItem.SubItems[1].Text == _rm.GetString("frmMain_Update_available")
+                                    where lvFiltersItem.Checked
+                                    select lvFiltersItem.Text).ToList();
 
             InstallSelected(filters);
 
             btnCancel.Enabled = false;
 
-            refreshContent();
+            RefreshContent();
+        }
+
+        private void RefreshContent()
+        {
+            if (lvFilters.Items.Count == 0 || !rbInstalled.Checked)
+            {
+                btnRefresh.Enabled = true;
+                return;
+            }
+
+            Utils.PersistInstalledFiltersSha256AndContentLength(txtPodInstallationLoc.Text, _data, _parser,
+                _configFile);
+
+            PersistServerETagAndContentLengthOfInstalledFilters();
+
+            btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data, _rm);
+
+            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+
+            btnRefresh.Enabled = true;
         }
     }
 }

@@ -69,6 +69,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\FilterContentDataModel.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
@@ -83,6 +89,9 @@
     <Compile Include="Models\ProgressReportModel.cs" />
     <Compile Include="Models\FilterHttpHeaderDataModel.cs" />
     <Compile Include="Utils.cs" />
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>

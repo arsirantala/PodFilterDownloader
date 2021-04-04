@@ -10,27 +10,27 @@ namespace IxothPodFilterDownloader
 {
     public static class UpdateAndDownload
     {
-        public static bool ContentLengthCheck(string filter, IniData _data)
+        public static bool ContentLengthCheck(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
                 return false;
             }
 
-            if (string.IsNullOrEmpty(_data[filter].GetKeyData("server_content_length").Value))
+            if (string.IsNullOrEmpty(data[filter].GetKeyData("server_content_length").Value))
             {
                 return false;
             }
             else
             {
-                if (string.IsNullOrEmpty(_data[filter].GetKeyData("installed_content_length").Value))
+                if (string.IsNullOrEmpty(data[filter].GetKeyData("installed_content_length").Value))
                 {
                     return false;
                 }
                 else
                 {
-                    if (_data[filter].GetKeyData("server_content_length").Value !=
-                        _data[filter].GetKeyData("installed_content_length").Value)
+                    if (data[filter].GetKeyData("server_content_length").Value !=
+                        data[filter].GetKeyData("installed_content_length").Value)
                     {
                         return true;
                     }
@@ -40,14 +40,14 @@ namespace IxothPodFilterDownloader
             return false;
         }
 
-        public static bool Sha256Check(string filter, IniData _data)
+        public static bool Sha256Check(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
                 return false;
             }
 
-            if (string.IsNullOrEmpty(_data[filter].GetKeyData("downloaded_sha256").Value))
+            if (string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_sha256").Value))
             {
                 // Filter has no ETags or downloaded sha256, probably was copied directly to filter directory
                 return false;
@@ -55,14 +55,14 @@ namespace IxothPodFilterDownloader
             else
             {
                 // Filter has no Etags, check with sha256s
-                if (string.IsNullOrEmpty(_data[filter].GetKeyData("installed_sha256").Value))
+                if (string.IsNullOrEmpty(data[filter].GetKeyData("installed_sha256").Value))
                 {
                     return false;
                 }
                 else
                 {
-                    if (_data[filter].GetKeyData("downloaded_sha256").Value !=
-                        _data[filter].GetKeyData("installed_sha256").Value)
+                    if (data[filter].GetKeyData("downloaded_sha256").Value !=
+                        data[filter].GetKeyData("installed_sha256").Value)
                     {
                         return true;
                     }
@@ -72,7 +72,7 @@ namespace IxothPodFilterDownloader
             return false;
         }
 
-        public static bool ETagCheck(string filter, IniData _data)
+        public static bool ETagCheck(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
@@ -80,14 +80,14 @@ namespace IxothPodFilterDownloader
             }
 
             // Filter has ETags
-            if (string.IsNullOrEmpty(_data[filter].GetKeyData("downloaded_etag").Value))
+            if (string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_etag").Value))
             {
                 return false;
             }
             else
             {
-                if (_data[filter].GetKeyData("server_etag").Value !=
-                    _data[filter].GetKeyData("downloaded_etag").Value)
+                if (data[filter].GetKeyData("server_etag").Value !=
+                    data[filter].GetKeyData("downloaded_etag").Value)
                 {
                     return true;
                 }
@@ -96,15 +96,15 @@ namespace IxothPodFilterDownloader
             return false;
         }
 
-        public static bool HasEtags(string filter, IniData _data)
+        public static bool HasEtags(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
                 return false;
             }
 
-            return !string.IsNullOrEmpty(_data[filter].GetKeyData("downloaded_etag").Value) &&
-                   !string.IsNullOrEmpty(_data[filter].GetKeyData("server_etag").Value);
+            return !string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_etag").Value) &&
+                   !string.IsNullOrEmpty(data[filter].GetKeyData("server_etag").Value);
         }
 
         /// <summary>
