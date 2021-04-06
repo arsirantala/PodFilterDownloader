@@ -23,6 +23,8 @@ namespace IxothPodFilterDownloader
         readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private FileSystemWatcher _fsw;
 
+        public const string filterDirectoryName = "filter";
+
         public frmMain()
         {
             InitializeComponent();
@@ -93,8 +95,6 @@ namespace IxothPodFilterDownloader
         {
             btnRefresh.Enabled = false;
 
-            PersistServerETagAndContentLengthOfInstalledFilters();
-
             RefreshContent();
         }
 
@@ -121,45 +121,14 @@ namespace IxothPodFilterDownloader
             }
         }
 
-        private void UpdateButtonStates()
-        {
-            if (rbInstalled.Checked)
-            {
-                if (lvFilters.SelectedItems.Count == 0)
-                {
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
-                }
-                else
-                {
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, true);
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
-                }
-                Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
-            }
-            else
-            {
-                if (lvFilters.SelectedItems.Count == 0)
-                {
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
-                }
-                else
-                {
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, true);
-                    Utils.UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
-                }
-
-                Utils.UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
-            }
-        }
-
         private void rbInstalled_CheckedChanged(object sender, EventArgs e)
         {
-            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
-                btnDownloadUpdatedFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter);
+            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, 
+                rbAvailable, btnInstallSelected, btnDownloadUpdatedFilters, btnRemoveSelected, 
+                btnMoreInfoOnSelectedFilter);
 
-            UpdateButtonStates();
+            Utils.UpdateButtonStates(rbInstalled, lvFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter,
+                btnInstallSelected);
         }
 
         private void btnRemoveSelected_Click(object sender, EventArgs e)
@@ -181,13 +150,14 @@ namespace IxothPodFilterDownloader
             // ReSharper disable once LocalizableElement
             if (MessageBox.Show($"{_rm.GetString("frmMain_Are_you_sure_you_want_to_remove_file")}", _rm.GetString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                File.Delete($"{txtPodInstallationLoc.Text}\\filter\\{lvFilters.SelectedItems[0].Text}.filter");
+                File.Delete($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}\\{lvFilters.SelectedItems[0].Text}.filter");
             }
         }
 
         private void lvFilters_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            UpdateButtonStates();
+            Utils.UpdateButtonStates(rbInstalled, lvFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter,
+                btnInstallSelected);
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -198,8 +168,8 @@ namespace IxothPodFilterDownloader
         private void frmMain_Shown(object sender, EventArgs e)
         {
             _configFile = Path.Combine(
-                Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? throw new InvalidOperationException()
-                , @"Configuration.ini");
+                Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ?? 
+                throw new InvalidOperationException(), @"Configuration.ini");
 
             _data = _parser.ReadFile(_configFile);
 
@@ -217,9 +187,9 @@ namespace IxothPodFilterDownloader
             // Can also get the server's etag and content length of the filter and persist those as well.
             // Have to keep mind of parallel downloading tasks as they are using inifile's write method, so that persisting of above info
             // is still thread safe
-            if (Directory.Exists($"{txtPodInstallationLoc.Text}\\filter"))
+            if (Directory.Exists($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}"))
             {
-                _fsw = new FileSystemWatcher($"{txtPodInstallationLoc.Text}\\filter", "*.filter")
+                _fsw = new FileSystemWatcher($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}", "*.filter")
                 {
                     IncludeSubdirectories = false,
                     NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size,
@@ -305,7 +275,7 @@ namespace IxothPodFilterDownloader
 
             foreach (var result in results)
             {
-                File.WriteAllText($"{txtPodInstallationLoc.Text}\\filter\\{result.FilterName}.filter", result.Content);
+                File.WriteAllText($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}\\{result.FilterName}.filter", result.Content);
                 var test = _data[result.FilterName].GetKeyData("downloaded_etag");
                 test.Value = result.ETag;
                 _data[result.FilterName].SetKeyData(test);
@@ -315,7 +285,7 @@ namespace IxothPodFilterDownloader
                 _data[result.FilterName].SetKeyData(test);
 
                 test = _data[result.FilterName].GetKeyData("downloaded_sha256");
-                test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\filter\\{result.FilterName}.filter"));
+                test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}\\{result.FilterName}.filter"));
                 _data[result.FilterName].SetKeyData(test);
 
                 _parser.WriteFile(_configFile, _data);

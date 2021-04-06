@@ -121,7 +121,7 @@ namespace IxothPodFilterDownloader
 
             foreach (var filter in iniData.Sections)
             {
-                if (File.Exists($"{poDInstallLocation}\\filter\\{filter.SectionName}.filter"))
+                if (File.Exists($"{poDInstallLocation}\\{frmMain.filterDirectoryName}\\{filter.SectionName}.filter"))
                 {
                     sources.Add(filter.SectionName);
                 }

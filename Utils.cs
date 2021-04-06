@@ -16,6 +16,41 @@ namespace IxothPodFilterDownloader
     {
         private static readonly SHA256 Sha256 = SHA256.Create();
 
+
+        public static void UpdateButtonStates(RadioButton rbInstalled, ListView lvFilters, Button btnRemoveSelected,
+            Button btnMoreInfoOnSelectedFilter, Button btnInstallSelected)
+        {
+            if (rbInstalled.Checked)
+            {
+                if (lvFilters.SelectedItems.Count == 0)
+                {
+                    UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
+                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
+                }
+                else
+                {
+                    UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, true);
+                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
+                }
+                UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
+            }
+            else
+            {
+                if (lvFilters.SelectedItems.Count == 0)
+                {
+                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, false);
+                    UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, false);
+                }
+                else
+                {
+                    UpdateButtonStateWithInvokeIfNeeded(btnInstallSelected, true);
+                    UpdateButtonStateWithInvokeIfNeeded(btnMoreInfoOnSelectedFilter, true);
+                }
+
+                UpdateButtonStateWithInvokeIfNeeded(btnRemoveSelected, false);
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -75,7 +110,7 @@ namespace IxothPodFilterDownloader
         public static void PersistInstalledFiltersSha256AndContentLength(string filtername, string PodInstallationLoc,
             IniData data, FileIniDataParser parser, string configFile)
         {
-            if (File.Exists($"{PodInstallationLoc}\\filter\\{filtername}.filter"))
+            if (File.Exists($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{filtername}.filter"))
             {
                 PersistInstalledFiltersSha256AndContentLengthHelper(filtername, data, parser, configFile, PodInstallationLoc);
             }
@@ -98,11 +133,11 @@ namespace IxothPodFilterDownloader
                 temp += ".filter";
             }
             var test = data[filtername.Replace(".filter", "")].GetKeyData("installed_content_length");
-            test.Value = File.ReadAllText($"{PodInstallationLoc}\\filter\\{temp}").Length.ToString();
+            test.Value = File.ReadAllText($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{temp}").Length.ToString();
             data[filtername].SetKeyData(test);
 
             test = data[filtername.Replace(".filter", "")].GetKeyData("installed_sha256");
-            test.Value = Utils.BytesToString(Utils.GetHashSha256($"{PodInstallationLoc}\\filter\\{temp}"));
+            test.Value = BytesToString(GetHashSha256($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{temp}"));
             data[filtername].SetKeyData(test);
             parser.WriteFile(configFile, data);
         }
@@ -122,7 +157,7 @@ namespace IxothPodFilterDownloader
             {
                 foreach (var filter in data.Sections)
                 {
-                    if (File.Exists($"{PodInstallationLoc}\\filter\\{filter.SectionName}.filter"))
+                    if (File.Exists($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{filter.SectionName}.filter"))
                     {
                         PersistInstalledFiltersSha256AndContentLengthHelper(filter.SectionName, data, parser, 
                             configFile, PodInstallationLoc);
@@ -168,7 +203,7 @@ namespace IxothPodFilterDownloader
             foreach (var section in data.Sections)
             {
                 bool filterExists =
-                    File.Exists($"{PodInstallationLoc}\\filter\\{section.SectionName}.filter");
+                    File.Exists($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{section.SectionName}.filter");
 
                 if ((rbInstalled.Checked && filterExists) || (rbAvailable.Checked && !filterExists))
                 {
