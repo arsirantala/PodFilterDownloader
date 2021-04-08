@@ -105,6 +105,8 @@ namespace IxothPodFilterDownloader
 
         private async void PersistServerETagAndContentLengthOfInstalledFilters()
         {
+            btnCancel.Enabled = true;
+
             Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
             progress.ProgressChanged += ReportProgress;
 
@@ -124,6 +126,8 @@ namespace IxothPodFilterDownloader
 
                 _parser.WriteFile(_configFile, _data);
             }
+
+            btnCancel.Enabled = false;
         }
 
         private void rbInstalled_CheckedChanged(object sender, EventArgs e)
@@ -167,6 +171,7 @@ namespace IxothPodFilterDownloader
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            btnCancel.Enabled = false;
             _cts.Cancel();
         }
 
@@ -272,6 +277,8 @@ namespace IxothPodFilterDownloader
         /// <param name="filters">List of filters to be installed</param>
         private async void InstallSelected(List<string> filters)
         {
+            btnCancel.Enabled = true;
+
             Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
             progress.ProgressChanged += ReportProgress;
 
@@ -286,9 +293,9 @@ namespace IxothPodFilterDownloader
                 test.Value = result.ETag;
                 _data[result.FilterName].SetKeyData(test);
 
-                //test = _data[result.FilterName].GetKeyData("downloaded_content_length");
-                //test.Value = result.ContentLength;
-                //_data[result.FilterName].SetKeyData(test);
+                test = _data[result.FilterName].GetKeyData("installed_content_length");
+                test.Value = result.ContentLength;
+                _data[result.FilterName].SetKeyData(test);
 
                 test = _data[result.FilterName].GetKeyData("downloaded_sha256");
                 test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter"));
@@ -348,8 +355,6 @@ namespace IxothPodFilterDownloader
 
             btnDownloadUpdatedFilters.Enabled = false;
 
-            btnCancel.Enabled = true;
-
             xpProgressBar.Text = _rm.GetString("frmMain_Updating_selected_filters");
 
             List<string> filters = (from ListViewItem lvFiltersItem in lvFilters.Items
@@ -374,10 +379,6 @@ namespace IxothPodFilterDownloader
             PersistServerETagAndContentLengthOfInstalledFilters();
 
             btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data, _rm);
-
-            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-
-            btnRefresh.Enabled = true;
         }
     }
 }

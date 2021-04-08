@@ -51,9 +51,9 @@ namespace IxothPodFilterDownloader
             }
         }
 
-        private static bool CheckFilterHasUpdateHelper(IniData data, string filter)
+        private static UpdateAndDownload.BoolEnum CheckFilterHasUpdateHelper(IniData data, string filter)
         {
-            bool updatesFound = false;
+            UpdateAndDownload.BoolEnum updatesFound;
 
             if (UpdateAndDownload.HasEtags(filter, data))
             {
@@ -61,16 +61,20 @@ namespace IxothPodFilterDownloader
             }
             else
             {
-                if (UpdateAndDownload.HasSha256tags(filter, data))
+                if (UpdateAndDownload.HasSha256Tags(filter, data))
                 {
                     updatesFound = UpdateAndDownload.Sha256Check(filter, data);
+                }
+                else
+                {
+                    updatesFound = UpdateAndDownload.ContentLengthCheck(filter, data);
                 }
             }
 
             return updatesFound;
         }
 
-        public static bool CheckIfFilterHasUpdate(IniData data, string filter)
+        public static UpdateAndDownload.BoolEnum CheckIfFilterHasUpdate(IniData data, string filter)
         {
             return CheckFilterHasUpdateHelper(data, filter);
         }
@@ -78,11 +82,13 @@ namespace IxothPodFilterDownloader
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="listView"></param>
+        /// <param name="lvFilters"></param>
         /// <param name="data"></param>
         /// <param name="rm"></param>
+        /// <param name="btnCancel"></param>
+        /// <param name="btnRefresh"></param>
         /// <returns></returns>
-        public static bool CheckIfInstalledFiltersHasUpdates(ListView listView, IniData data, ResourceManager rm)
+        public static bool CheckIfInstalledFiltersHasUpdates(ListView lvFilters, IniData data, ResourceManager rm)
         {
             bool updatesFound = false;
 
@@ -90,20 +96,22 @@ namespace IxothPodFilterDownloader
             //
             // If no Etags were found (downloaded and server's), then compare instead content lengths and sha256 values instead -
             // If sha256 value are found and content lengths, then compare those. If sha256 values and content lengths differ: update avail
-            foreach (ListViewItem lvFiltersItem in listView.Items)
+            foreach (ListViewItem lvFiltersItem in lvFilters.Items)
             {
-                if (CheckFilterHasUpdateHelper(data, lvFiltersItem.Text))
+                if (CheckFilterHasUpdateHelper(data, lvFiltersItem.Text) == UpdateAndDownload.BoolEnum.True)
                 {
-                    listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
+                    lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
                         rm.GetString("frmMain_Update_available");
                     updatesFound = true;
                 }
                 else
                 {
-                    listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = rm.GetString("frmMain_Installed");
-
+                    lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = 
+                        rm.GetString("frmMain_Installed");
                 }
             }
+
+            lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 
             return updatesFound;
         }
@@ -236,7 +244,7 @@ namespace IxothPodFilterDownloader
 
                     // Add ListViewItem
                     listView.Items.Add(new ListViewItem(
-                        new[] { section.SectionName, filterExists ? CheckIfFilterHasUpdate(data, section.SectionName) ?
+                        new[] { section.SectionName, filterExists ? CheckIfFilterHasUpdate(data, section.SectionName) == UpdateAndDownload.BoolEnum.True ?
                                 rm.GetString("frmMain_UpdateAvailable") : rm.GetString("frmMain_Installed") :
                                 rm.GetString("frmMain_Available"),
                             data[section.SectionName].GetKeyData("description").Value }, lvg));

@@ -10,88 +10,101 @@ namespace IxothPodFilterDownloader
 {
     public static class UpdateAndDownload
     {
-        public static bool ContentLengthCheck(string filter, IniData data)
+        public enum BoolEnum
+        {
+            True = 0,
+            False = 1,
+            None = 2
+        }
+
+        /// <summary>
+        /// Check if the filter has content length for both to installed version and for server.
+        /// </summary>
+        /// <param name="filter">Name of the filter</param>
+        /// <param name="data">Ini file content</param>
+        /// <returns>True if content lengths don't match. None if one of the content lengths didn't exist</returns>
+        public static BoolEnum ContentLengthCheck(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
-                return false;
+                return BoolEnum.None;
             }
 
             if (string.IsNullOrEmpty(data[filter].GetKeyData("server_content_length").Value))
             {
-                return false;
+                return BoolEnum.None;
             }
             else
             {
                 if (string.IsNullOrEmpty(data[filter].GetKeyData("installed_content_length").Value))
                 {
-                    return false;
+                    return BoolEnum.None;
                 }
                 else
                 {
                     if (data[filter].GetKeyData("server_content_length").Value !=
                         data[filter].GetKeyData("installed_content_length").Value)
                     {
-                        return true;
+                        return BoolEnum.True;
                     }
                 }
             }
 
-            return false;
+            return BoolEnum.False;
         }
 
-        public static bool Sha256Check(string filter, IniData data)
+        public static BoolEnum Sha256Check(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
-                return false;
+                return BoolEnum.None;
             }
 
             if (string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_sha256").Value))
             {
-                return false;
+                return BoolEnum.None;
             }
             else
             {
                 if (string.IsNullOrEmpty(data[filter].GetKeyData("installed_sha256").Value))
                 {
-                    return false;
+                    return BoolEnum.None;
                 }
                 else
                 {
                     if (data[filter].GetKeyData("downloaded_sha256").Value !=
                         data[filter].GetKeyData("installed_sha256").Value)
                     {
-                        return true;
+                        return BoolEnum.True;
                     }
                 }
             }
 
-            return false;
+            return BoolEnum.False;
         }
 
-        public static bool ETagCheck(string filter, IniData data)
+        public static BoolEnum ETagCheck(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
-                return false;
+                return BoolEnum.None;
             }
 
             // Filter has ETags
             if (string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_etag").Value))
             {
-                return false;
+                return BoolEnum.None;
             }
             else
             {
                 if (data[filter].GetKeyData("server_etag").Value !=
                     data[filter].GetKeyData("downloaded_etag").Value)
                 {
-                    return true;
+                    return BoolEnum.True;
                 }
             }
 
-            return false;
+            return BoolEnum.False;
         }
 
         public static bool HasEtags(string filter, IniData data)
@@ -105,7 +118,7 @@ namespace IxothPodFilterDownloader
                    !string.IsNullOrEmpty(data[filter].GetKeyData("server_etag").Value);
         }
 
-        public static bool HasSha256tags(string filter, IniData data)
+        public static bool HasSha256Tags(string filter, IniData data)
         {
             if (string.IsNullOrEmpty(filter))
             {
