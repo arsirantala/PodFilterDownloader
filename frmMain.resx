@@ -732,4 +732,16 @@
   <data name="frmMain_Click_Please_use_checkboxes_to_select_some_filtes_you_want_to_update_first" xml:space="preserve">
     <value>Please use checkboxes to select some filtes you want to update first</value>
   </data>
+  <data name="frmMain_Checking_updates_from_servers" xml:space="preserve">
+    <value>Checking updates from servers</value>
+  </data>
+  <data name="frmMain_Operation_completed" xml:space="preserve">
+    <value>Operation completed</value>
+  </data>
+  <data name="frmMain_Updating_selected_filters" xml:space="preserve">
+    <value>Updating selected filters</value>
+  </data>
+  <data name="frmMain_Installing_selected_filter" xml:space="preserve">
+    <value>Installing selected filter</value>
+  </data>
 </root>

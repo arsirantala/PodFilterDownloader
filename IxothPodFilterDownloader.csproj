@@ -135,6 +135,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="XpProgressBar\Source\Control\Xp ProgressBar.csproj">
+      <Project>{98348d7a-6606-4cea-bac9-859d435c5988}</Project>
+      <Name>Xp ProgressBar</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

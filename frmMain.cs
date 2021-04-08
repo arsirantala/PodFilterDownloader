@@ -88,7 +88,12 @@ namespace IxothPodFilterDownloader
 
         private void ReportProgress(object sender, ProgressReportModel e)
         {
-            progressBar.Value = e.PercentageComplete;
+            xpProgressBar.Position = e.PercentageComplete;
+
+            if (xpProgressBar.Position >= xpProgressBar.PositionMax)
+            {
+                xpProgressBar.Text = _rm.GetString("frmMain_Operation_completed");
+            }
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -219,6 +224,7 @@ namespace IxothPodFilterDownloader
             toolStripMenuItemFileExit.Text = _rm.GetString("frmMain_File_Exit_Menuitem");
             toolStripMenuItemHelpAbout.Text = _rm.GetString("frmMain_About");
             btnCancel.Text = _rm.GetString("frmMain_Cancel");
+            xpProgressBar.Text = _rm.GetString("frmMain_Checking_updates_from_servers");
 
             RefreshContent();
         }
@@ -308,6 +314,8 @@ namespace IxothPodFilterDownloader
             {
                 btnCancel.Enabled = true;
 
+                xpProgressBar.Text = _rm.GetString("frmMain_Installing_selected_filter");
+
                 btnInstallSelected.Enabled = false;
 
                 List<string> filters = new List<string> { lvFilters.SelectedItems[0].Text };
@@ -341,6 +349,8 @@ namespace IxothPodFilterDownloader
             btnDownloadUpdatedFilters.Enabled = false;
 
             btnCancel.Enabled = true;
+
+            xpProgressBar.Text = _rm.GetString("frmMain_Updating_selected_filters");
 
             List<string> filters = (from ListViewItem lvFiltersItem in lvFilters.Items
                                     where lvFiltersItem.SubItems[1].Text == _rm.GetString("frmMain_Update_available")
