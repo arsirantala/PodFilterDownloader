@@ -49,12 +49,10 @@ namespace IxothPodFilterDownloader
 
             if (string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_sha256").Value))
             {
-                // Filter has no ETags or downloaded sha256, probably was copied directly to filter directory
                 return false;
             }
             else
             {
-                // Filter has no Etags, check with sha256s
                 if (string.IsNullOrEmpty(data[filter].GetKeyData("installed_sha256").Value))
                 {
                     return false;
@@ -107,6 +105,17 @@ namespace IxothPodFilterDownloader
                    !string.IsNullOrEmpty(data[filter].GetKeyData("server_etag").Value);
         }
 
+        public static bool HasSha256tags(string filter, IniData data)
+        {
+            if (string.IsNullOrEmpty(filter))
+            {
+                return false;
+            }
+
+            return !string.IsNullOrEmpty(data[filter].GetKeyData("downloaded_sha256").Value) &&
+                   !string.IsNullOrEmpty(data[filter].GetKeyData("installed_sha256").Value);
+        }
+
         /// <summary>
         /// Get ETag and content-length for the installed PoD filters in the servers
         /// </summary>
@@ -121,7 +130,7 @@ namespace IxothPodFilterDownloader
 
             foreach (var filter in iniData.Sections)
             {
-                if (File.Exists($"{poDInstallLocation}\\{frmMain.filterDirectoryName}\\{filter.SectionName}.filter"))
+                if (File.Exists($"{poDInstallLocation}\\{frmMain.FilterDirectoryName}\\{filter.SectionName}.filter"))
                 {
                     sources.Add(filter.SectionName);
                 }

@@ -51,6 +51,30 @@ namespace IxothPodFilterDownloader
             }
         }
 
+        private static bool CheckFilterHasUpdateHelper(IniData data, string filter)
+        {
+            bool updatesFound = false;
+
+            if (UpdateAndDownload.HasEtags(filter, data))
+            {
+                updatesFound = UpdateAndDownload.ETagCheck(filter, data);
+            }
+            else
+            {
+                if (UpdateAndDownload.HasSha256tags(filter, data))
+                {
+                    updatesFound = UpdateAndDownload.Sha256Check(filter, data);
+                }
+            }
+
+            return updatesFound;
+        }
+
+        public static bool CheckIfFilterHasUpdate(IniData data, string filter)
+        {
+            return CheckFilterHasUpdateHelper(data, filter);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -68,31 +92,16 @@ namespace IxothPodFilterDownloader
             // If sha256 value are found and content lengths, then compare those. If sha256 values and content lengths differ: update avail
             foreach (ListViewItem lvFiltersItem in listView.Items)
             {
-                if (UpdateAndDownload.HasEtags(lvFiltersItem.Text, data))
+                if (CheckFilterHasUpdateHelper(data, lvFiltersItem.Text))
                 {
-                    if (UpdateAndDownload.ETagCheck(lvFiltersItem.Text, data) && UpdateAndDownload.Sha256Check(lvFiltersItem.Text, data) && UpdateAndDownload.ContentLengthCheck(lvFiltersItem.Text, data))
-                    {
-                        listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
-                            rm.GetString("frmMain_Update_available");
-                        updatesFound = true;
-                    }
-                    else
-                    {
-                        listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = rm.GetString("frmMain_Installed");
-                    }
+                    listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
+                        rm.GetString("frmMain_Update_available");
+                    updatesFound = true;
                 }
                 else
                 {
-                    if (UpdateAndDownload.Sha256Check(lvFiltersItem.Text, data) && UpdateAndDownload.ContentLengthCheck(lvFiltersItem.Text, data))
-                    {
-                        listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
-                            rm.GetString("frmMain_Update_available");
-                        updatesFound = true;
-                    }
-                    else
-                    {
-                        listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = rm.GetString("frmMain_Installed");
-                    }
+                    listView.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = rm.GetString("frmMain_Installed");
+
                 }
             }
 
@@ -110,7 +119,7 @@ namespace IxothPodFilterDownloader
         public static void PersistInstalledFiltersSha256AndContentLength(string filtername, string PodInstallationLoc,
             IniData data, FileIniDataParser parser, string configFile)
         {
-            if (File.Exists($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{filtername}.filter"))
+            if (File.Exists($"{PodInstallationLoc}\\{frmMain.FilterDirectoryName}\\{filtername}.filter"))
             {
                 PersistInstalledFiltersSha256AndContentLengthHelper(filtername, data, parser, configFile, PodInstallationLoc);
             }
@@ -124,7 +133,7 @@ namespace IxothPodFilterDownloader
         /// <param name="parser"></param>
         /// <param name="configFile"></param>
         /// <param name="PodInstallationLoc"></param>
-        public static void PersistInstalledFiltersSha256AndContentLengthHelper(string filtername, IniData data, FileIniDataParser parser, 
+        public static void PersistInstalledFiltersSha256AndContentLengthHelper(string filtername, IniData data, FileIniDataParser parser,
             string configFile, string PodInstallationLoc)
         {
             string temp = filtername;
@@ -133,11 +142,11 @@ namespace IxothPodFilterDownloader
                 temp += ".filter";
             }
             var test = data[filtername.Replace(".filter", "")].GetKeyData("installed_content_length");
-            test.Value = File.ReadAllText($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{temp}").Length.ToString();
+            test.Value = File.ReadAllText($"{PodInstallationLoc}\\{frmMain.FilterDirectoryName}\\{temp}").Length.ToString();
             data[filtername].SetKeyData(test);
 
             test = data[filtername.Replace(".filter", "")].GetKeyData("installed_sha256");
-            test.Value = BytesToString(GetHashSha256($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{temp}"));
+            test.Value = BytesToString(GetHashSha256($"{PodInstallationLoc}\\{frmMain.FilterDirectoryName}\\{temp}"));
             data[filtername].SetKeyData(test);
             parser.WriteFile(configFile, data);
         }
@@ -149,7 +158,7 @@ namespace IxothPodFilterDownloader
         /// <param name="data"></param>
         /// <param name="parser"></param>
         /// <param name="configFile"></param>
-        public static void PersistInstalledFiltersSha256AndContentLength(string PodInstallationLoc, IniData data, 
+        public static void PersistInstalledFiltersSha256AndContentLength(string PodInstallationLoc, IniData data,
             FileIniDataParser parser, string configFile)
         {
             if (PodInstallationLoc.Length > 0 &&
@@ -157,9 +166,9 @@ namespace IxothPodFilterDownloader
             {
                 foreach (var filter in data.Sections)
                 {
-                    if (File.Exists($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{filter.SectionName}.filter"))
+                    if (File.Exists($"{PodInstallationLoc}\\{frmMain.FilterDirectoryName}\\{filter.SectionName}.filter"))
                     {
-                        PersistInstalledFiltersSha256AndContentLengthHelper(filter.SectionName, data, parser, 
+                        PersistInstalledFiltersSha256AndContentLengthHelper(filter.SectionName, data, parser,
                             configFile, PodInstallationLoc);
                     }
                 }
@@ -203,7 +212,7 @@ namespace IxothPodFilterDownloader
             foreach (var section in data.Sections)
             {
                 bool filterExists =
-                    File.Exists($"{PodInstallationLoc}\\{frmMain.filterDirectoryName}\\{section.SectionName}.filter");
+                    File.Exists($"{PodInstallationLoc}\\{frmMain.FilterDirectoryName}\\{section.SectionName}.filter");
 
                 if ((rbInstalled.Checked && filterExists) || (rbAvailable.Checked && !filterExists))
                 {
@@ -227,7 +236,9 @@ namespace IxothPodFilterDownloader
 
                     // Add ListViewItem
                     listView.Items.Add(new ListViewItem(
-                        new[] { section.SectionName, filterExists ? rm.GetString("frmMain_Installed") : rm.GetString("frmMain_Available"),
+                        new[] { section.SectionName, filterExists ? CheckIfFilterHasUpdate(data, section.SectionName) ?
+                                rm.GetString("frmMain_UpdateAvailable") : rm.GetString("frmMain_Installed") :
+                                rm.GetString("frmMain_Available"),
                             data[section.SectionName].GetKeyData("description").Value }, lvg));
                     listView.Items[listView.Items.Count - 1].Tag = section.SectionName;
                     listView.Items[listView.Items.Count - 1].Checked = bool.Parse(data[section.SectionName].GetKeyData("selected_for_updates").Value);

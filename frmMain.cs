@@ -23,7 +23,7 @@ namespace IxothPodFilterDownloader
         readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private FileSystemWatcher _fsw;
 
-        public const string filterDirectoryName = "filter";
+        public const string FilterDirectoryName = "filter";
 
         public frmMain()
         {
@@ -150,7 +150,7 @@ namespace IxothPodFilterDownloader
             // ReSharper disable once LocalizableElement
             if (MessageBox.Show($"{_rm.GetString("frmMain_Are_you_sure_you_want_to_remove_file")}", _rm.GetString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                File.Delete($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}\\{lvFilters.SelectedItems[0].Text}.filter");
+                File.Delete($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{lvFilters.SelectedItems[0].Text}.filter");
             }
         }
 
@@ -187,9 +187,9 @@ namespace IxothPodFilterDownloader
             // Can also get the server's etag and content length of the filter and persist those as well.
             // Have to keep mind of parallel downloading tasks as they are using inifile's write method, so that persisting of above info
             // is still thread safe
-            if (Directory.Exists($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}"))
+            if (Directory.Exists($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}"))
             {
-                _fsw = new FileSystemWatcher($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}", "*.filter")
+                _fsw = new FileSystemWatcher($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}", "*.filter")
                 {
                     IncludeSubdirectories = false,
                     NotifyFilter = NotifyFilters.CreationTime | NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size,
@@ -275,23 +275,31 @@ namespace IxothPodFilterDownloader
 
             foreach (var result in results)
             {
-                File.WriteAllText($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}\\{result.FilterName}.filter", result.Content);
+                File.WriteAllText($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter", result.Content);
                 var test = _data[result.FilterName].GetKeyData("downloaded_etag");
                 test.Value = result.ETag;
                 _data[result.FilterName].SetKeyData(test);
 
-                test = _data[result.FilterName].GetKeyData("downloaded_content_length");
-                test.Value = result.ContentLength;
-                _data[result.FilterName].SetKeyData(test);
+                //test = _data[result.FilterName].GetKeyData("downloaded_content_length");
+                //test.Value = result.ContentLength;
+                //_data[result.FilterName].SetKeyData(test);
 
                 test = _data[result.FilterName].GetKeyData("downloaded_sha256");
-                test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\{filterDirectoryName}\\{result.FilterName}.filter"));
+                test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter"));
                 _data[result.FilterName].SetKeyData(test);
 
                 _parser.WriteFile(_configFile, _data);
             }
 
-            Utils.PersistInstalledFiltersSha256AndContentLength(txtPodInstallationLoc.Text, _data, _parser, _configFile);
+            if (rbAvailable.Checked)
+            {
+                var temp = lvFilters.FindItemWithText(lvFilters.SelectedItems[0].Text);
+                lvFilters.Items.Remove(temp);
+            }
+
+            btnCancel.Enabled = false;
+
+            RefreshContent();
         }
 
         private void btnInstallSelected_Click(object sender, EventArgs e)
@@ -305,13 +313,6 @@ namespace IxothPodFilterDownloader
                 List<string> filters = new List<string> { lvFilters.SelectedItems[0].Text };
 
                 InstallSelected(filters);
-
-                var temp = lvFilters.FindItemWithText(lvFilters.SelectedItems[0].Text);
-                lvFilters.Items.Remove(temp);
-
-                btnCancel.Enabled = false;
-
-                RefreshContent();
             }
             else
             {
@@ -347,10 +348,6 @@ namespace IxothPodFilterDownloader
                                     select lvFiltersItem.Text).ToList();
 
             InstallSelected(filters);
-
-            btnCancel.Enabled = false;
-
-            RefreshContent();
         }
 
         private void RefreshContent()
