@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Resources;
 using System.Threading;
@@ -116,15 +117,22 @@ namespace IxothPodFilterDownloader
 
             foreach (var result in results)
             {
-                var test = _data[result.FilterName].GetKeyData("server_etag");
-                test.Value = result.ETag;
-                _data[result.FilterName].SetKeyData(test);
+                if (result.HttpStatusCode == HttpStatusCode.OK)
+                {
+                    var test = _data[result.FilterName].GetKeyData("server_etag");
+                    test.Value = result.ETag;
+                    _data[result.FilterName].SetKeyData(test);
 
-                test = _data[result.FilterName].GetKeyData("server_content_length");
-                test.Value = result.ContentLength;
-                _data[result.FilterName].SetKeyData(test);
+                    test = _data[result.FilterName].GetKeyData("server_content_length");
+                    test.Value = result.ContentLength;
+                    _data[result.FilterName].SetKeyData(test);
 
-                _parser.WriteFile(_configFile, _data);
+                    _parser.WriteFile(_configFile, _data);
+                }
+                else
+                {
+                    // TODO
+                }
             }
 
             btnCancel.Enabled = false;
@@ -277,6 +285,8 @@ namespace IxothPodFilterDownloader
         /// <param name="filters">List of filters to be installed</param>
         private async void InstallSelected(List<string> filters)
         {
+            bool dontRemove = false;
+
             btnCancel.Enabled = true;
 
             Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
@@ -288,23 +298,39 @@ namespace IxothPodFilterDownloader
 
             foreach (var result in results)
             {
-                File.WriteAllText($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter", result.Content);
-                var test = _data[result.FilterName].GetKeyData("downloaded_etag");
-                test.Value = result.ETag;
-                _data[result.FilterName].SetKeyData(test);
+                if (result.HttpStatusCode == HttpStatusCode.OK)
+                {
+                    File.WriteAllText($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter", result.Content);
+                    var test = _data[result.FilterName].GetKeyData("downloaded_etag");
+                    test.Value = result.ETag;
+                    _data[result.FilterName].SetKeyData(test);
 
-                test = _data[result.FilterName].GetKeyData("installed_content_length");
-                test.Value = result.ContentLength;
-                _data[result.FilterName].SetKeyData(test);
+                    test = _data[result.FilterName].GetKeyData("installed_content_length");
+                    test.Value = result.ContentLength;
+                    _data[result.FilterName].SetKeyData(test);
 
-                test = _data[result.FilterName].GetKeyData("downloaded_sha256");
-                test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter"));
-                _data[result.FilterName].SetKeyData(test);
+                    test = _data[result.FilterName].GetKeyData("downloaded_sha256");
+                    test.Value = Utils.BytesToString(Utils.GetHashSha256($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{result.FilterName}.filter"));
+                    _data[result.FilterName].SetKeyData(test);
 
-                _parser.WriteFile(_configFile, _data);
+                    _parser.WriteFile(_configFile, _data);
+                }
+                else
+                {
+                    // TODO
+                    dontRemove = true;
+    
+                    // Restore the install selected button back to enabled, so user can retry the download of selected filter in case of error
+                    if (rbAvailable.Checked)
+                    {
+                        btnInstallSelected.Enabled = true;
+                    }
+                    MessageBox.Show($"Error downloading the {result.FilterName}. Error was: {result.HttpStatusCode}", _rm.GetString("frmMain_Error"),
+                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
             }
 
-            if (rbAvailable.Checked)
+            if (rbAvailable.Checked && !dontRemove)
             {
                 var temp = lvFilters.FindItemWithText(lvFilters.SelectedItems[0].Text);
                 lvFilters.Items.Remove(temp);
@@ -379,6 +405,13 @@ namespace IxothPodFilterDownloader
             PersistServerETagAndContentLengthOfInstalledFilters();
 
             btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data, _rm);
+        }
+
+        private void toolStripMenuItemFileFilterAdmin_Click(object sender, EventArgs e)
+        {
+            frmAdmin admin = new frmAdmin();
+            admin.ShowDialog(this);
+            admin.Dispose();
         }
     }
 }

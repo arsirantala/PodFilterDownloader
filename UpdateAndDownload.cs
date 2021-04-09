@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -156,7 +157,8 @@ namespace IxothPodFilterDownloader
             {
                 Parallel.ForEach(sources, (filter) =>
                 {
-                    FilterHttpHeaderDataModel results = GetFilterHttpHeaders(iniData, filter);
+                    FilterHttpHeaderDataModel results = new FilterHttpHeaderDataModel();
+                    results = GetFilterHttpHeaders(iniData, filter);
                     output.Add(results);
 
                     report.PercentageComplete = (output.Count * 100) / sources.Count;
@@ -175,10 +177,19 @@ namespace IxothPodFilterDownloader
             var webRequest = WebRequest.Create(filterUrl);
             webRequest.Method = "HEAD";
 
-            using (var webResponse = webRequest.GetResponse())
+            try
             {
-                output.ETag = webResponse.Headers["ETag"];
-                output.ContentLength = webResponse.ContentLength.ToString();
+                using (var webResponse = webRequest.GetResponse())
+                {
+                    output.ETag = webResponse.Headers["ETag"];
+                    output.ContentLength = webResponse.ContentLength.ToString();
+                    output.HttpStatusCode = ((HttpWebResponse)webResponse).StatusCode;
+                }
+            }
+            catch (Exception exception)
+            {
+                var test = exception.GetBaseException();
+                output.HttpStatusCode = ((HttpWebResponse) ((WebException) test).Response).StatusCode;
             }
 
             return output;
@@ -213,12 +224,21 @@ namespace IxothPodFilterDownloader
 
             using (var wc = new WebClient())
             {
-                output.Content = wc.DownloadString(new Uri(filterUrl));
-
-                if (wc.ResponseHeaders != null)
+                try
                 {
-                    output.ETag = wc.ResponseHeaders["ETag"] ?? "";
-                    output.ContentLength = wc.ResponseHeaders["content-length"] ?? "";
+                    output.Content = wc.DownloadString(new Uri(filterUrl));
+
+                    if (wc.ResponseHeaders != null)
+                    {
+                        output.ETag = wc.ResponseHeaders["ETag"] ?? "";
+                        output.ContentLength = wc.ResponseHeaders["content-length"] ?? "";
+                        output.HttpStatusCode = HttpStatusCode.OK; // Can't really get this but if no exception occurs then it should be OK
+                    }
+                }
+                catch (Exception exception)
+                {
+                    var test = exception.GetBaseException();
+                    output.HttpStatusCode = ((HttpWebResponse)((WebException)test).Response).StatusCode;
                 }
             }
 

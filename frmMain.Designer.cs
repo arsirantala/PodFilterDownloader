@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.gbOuter = new System.Windows.Forms.GroupBox();
+            this.xpProgressBar = new Framework.Controls.XpProgressBar();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnRemoveSelected = new System.Windows.Forms.Button();
             this.btnMoreInfoOnSelectedFilter = new System.Windows.Forms.Button();
@@ -49,7 +50,8 @@
             this.toolStripMenuItemFileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.xpProgressBar = new Framework.Controls.XpProgressBar();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripMenuItemFileFilterAdmin = new System.Windows.Forms.ToolStripMenuItem();
             this.gbOuter.SuspendLayout();
             this.gbPoDInstallLocation.SuspendLayout();
             this.gbInstalled_Available.SuspendLayout();
@@ -76,6 +78,22 @@
             this.gbOuter.TabIndex = 1;
             this.gbOuter.TabStop = false;
             this.gbOuter.Text = "Click on button to download PoD filter";
+            // 
+            // xpProgressBar
+            // 
+            this.xpProgressBar.ColorBackGround = System.Drawing.Color.White;
+            this.xpProgressBar.ColorBarBorder = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(240)))), ((int)(((byte)(170)))));
+            this.xpProgressBar.ColorBarCenter = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(150)))), ((int)(((byte)(10)))));
+            this.xpProgressBar.ColorText = System.Drawing.Color.Black;
+            this.xpProgressBar.Location = new System.Drawing.Point(17, 571);
+            this.xpProgressBar.Name = "xpProgressBar";
+            this.xpProgressBar.Position = 0;
+            this.xpProgressBar.PositionMax = 100;
+            this.xpProgressBar.PositionMin = 0;
+            this.xpProgressBar.Size = new System.Drawing.Size(780, 32);
+            this.xpProgressBar.SteepDistance = ((byte)(0));
+            this.xpProgressBar.TabIndex = 10;
+            this.xpProgressBar.Text = "Checking server for updates";
             // 
             // btnCancel
             // 
@@ -250,6 +268,8 @@
             // toolStripMenuItemFile
             // 
             this.toolStripMenuItemFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemFileFilterAdmin,
+            this.toolStripSeparator1,
             this.toolStripMenuItemFileExit});
             this.toolStripMenuItemFile.Name = "toolStripMenuItemFile";
             this.toolStripMenuItemFile.Size = new System.Drawing.Size(46, 24);
@@ -258,7 +278,7 @@
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(116, 26);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(224, 26);
             this.toolStripMenuItemFileExit.Text = "Exit";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
@@ -277,21 +297,17 @@
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
-            // xpProgressBar
+            // toolStripSeparator1
             // 
-            this.xpProgressBar.ColorBackGround = System.Drawing.Color.White;
-            this.xpProgressBar.ColorBarBorder = System.Drawing.Color.FromArgb(((int)(((byte)(170)))), ((int)(((byte)(240)))), ((int)(((byte)(170)))));
-            this.xpProgressBar.ColorBarCenter = System.Drawing.Color.FromArgb(((int)(((byte)(10)))), ((int)(((byte)(150)))), ((int)(((byte)(10)))));
-            this.xpProgressBar.ColorText = System.Drawing.Color.Black;
-            this.xpProgressBar.Location = new System.Drawing.Point(17, 571);
-            this.xpProgressBar.Name = "xpProgressBar";
-            this.xpProgressBar.Position = 0;
-            this.xpProgressBar.PositionMax = 100;
-            this.xpProgressBar.PositionMin = 0;
-            this.xpProgressBar.Size = new System.Drawing.Size(780, 32);
-            this.xpProgressBar.SteepDistance = ((byte)(0));
-            this.xpProgressBar.TabIndex = 10;
-            this.xpProgressBar.Text = "Checking server for updates";
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(221, 6);
+            // 
+            // toolStripMenuItemFileFilterAdmin
+            // 
+            this.toolStripMenuItemFileFilterAdmin.Name = "toolStripMenuItemFileFilterAdmin";
+            this.toolStripMenuItemFileFilterAdmin.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItemFileFilterAdmin.Text = "Filter admin...";
+            this.toolStripMenuItemFileFilterAdmin.Click += new System.EventHandler(this.toolStripMenuItemFileFilterAdmin_Click);
             // 
             // frmMain
             // 
@@ -346,6 +362,8 @@
         private System.Windows.Forms.Button btnRemoveSelected;
         private System.Windows.Forms.Button btnCancel;
         private Framework.Controls.XpProgressBar xpProgressBar;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemFileFilterAdmin;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
 
