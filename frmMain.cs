@@ -412,6 +412,10 @@ namespace IxothPodFilterDownloader
             frmAdmin admin = new frmAdmin();
             admin.ShowDialog(this);
             admin.Dispose();
+
+            // Reload the data just in case
+            _data = _parser.ReadFile(_configFile);
+            RefreshContent();
         }
     }
 }
