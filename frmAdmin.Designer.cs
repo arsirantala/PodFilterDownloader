@@ -30,6 +30,8 @@ namespace IxothPodFilterDownloader
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.txtFilterDescription = new System.Windows.Forms.TextBox();
+            this.lblDescription = new System.Windows.Forms.Label();
             this.txtFilterAuthor = new System.Windows.Forms.TextBox();
             this.lblAuthor = new System.Windows.Forms.Label();
             this.btnAddFilter = new System.Windows.Forms.Button();
@@ -43,13 +45,13 @@ namespace IxothPodFilterDownloader
             this.btnSaveFilterChanges = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.lbFilters = new System.Windows.Forms.ListBox();
-            this.txtFilterDescription = new System.Windows.Forms.TextBox();
-            this.lblDescription = new System.Windows.Forms.Label();
+            this.btnRestoreDefaultsFromInternet = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnRestoreDefaultsFromInternet);
             this.groupBox1.Controls.Add(this.txtFilterDescription);
             this.groupBox1.Controls.Add(this.lblDescription);
             this.groupBox1.Controls.Add(this.txtFilterAuthor);
@@ -73,6 +75,23 @@ namespace IxothPodFilterDownloader
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Filters which are supported";
             // 
+            // txtFilterDescription
+            // 
+            this.txtFilterDescription.Location = new System.Drawing.Point(269, 237);
+            this.txtFilterDescription.Name = "txtFilterDescription";
+            this.txtFilterDescription.Size = new System.Drawing.Size(762, 30);
+            this.txtFilterDescription.TabIndex = 7;
+            this.txtFilterDescription.Validating += new System.ComponentModel.CancelEventHandler(this.txtFilterDescription_Validating);
+            // 
+            // lblDescription
+            // 
+            this.lblDescription.AutoSize = true;
+            this.lblDescription.Location = new System.Drawing.Point(266, 208);
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(109, 25);
+            this.lblDescription.TabIndex = 6;
+            this.lblDescription.Text = "Description";
+            // 
             // txtFilterAuthor
             // 
             this.txtFilterAuthor.Location = new System.Drawing.Point(271, 107);
@@ -95,7 +114,7 @@ namespace IxothPodFilterDownloader
             this.btnAddFilter.Location = new System.Drawing.Point(559, 414);
             this.btnAddFilter.Name = "btnAddFilter";
             this.btnAddFilter.Size = new System.Drawing.Size(118, 41);
-            this.btnAddFilter.TabIndex = 11;
+            this.btnAddFilter.TabIndex = 13;
             this.btnAddFilter.Text = "Add filter";
             this.btnAddFilter.UseVisualStyleBackColor = true;
             this.btnAddFilter.Click += new System.EventHandler(this.btnAddFilter_Click);
@@ -105,7 +124,7 @@ namespace IxothPodFilterDownloader
             this.btnDeleteFilter.Location = new System.Drawing.Point(273, 414);
             this.btnDeleteFilter.Name = "btnDeleteFilter";
             this.btnDeleteFilter.Size = new System.Drawing.Size(119, 41);
-            this.btnDeleteFilter.TabIndex = 10;
+            this.btnDeleteFilter.TabIndex = 12;
             this.btnDeleteFilter.Text = "Delete filter";
             this.btnDeleteFilter.UseVisualStyleBackColor = true;
             this.btnDeleteFilter.Click += new System.EventHandler(this.btnDeleteFilter_Click);
@@ -115,7 +134,7 @@ namespace IxothPodFilterDownloader
             this.txtFilterHomeUrl.Location = new System.Drawing.Point(271, 374);
             this.txtFilterHomeUrl.Name = "txtFilterHomeUrl";
             this.txtFilterHomeUrl.Size = new System.Drawing.Size(762, 30);
-            this.txtFilterHomeUrl.TabIndex = 9;
+            this.txtFilterHomeUrl.TabIndex = 11;
             this.txtFilterHomeUrl.Validating += new System.ComponentModel.CancelEventHandler(this.txtFilterHomeUrl_Validating);
             // 
             // lblFilterHomeUrl
@@ -124,7 +143,7 @@ namespace IxothPodFilterDownloader
             this.lblFilterHomeUrl.Location = new System.Drawing.Point(268, 345);
             this.lblFilterHomeUrl.Name = "lblFilterHomeUrl";
             this.lblFilterHomeUrl.Size = new System.Drawing.Size(93, 25);
-            this.lblFilterHomeUrl.TabIndex = 8;
+            this.lblFilterHomeUrl.TabIndex = 10;
             this.lblFilterHomeUrl.Text = "Home Url";
             // 
             // txtFilterDownloadUrl
@@ -132,7 +151,7 @@ namespace IxothPodFilterDownloader
             this.txtFilterDownloadUrl.Location = new System.Drawing.Point(271, 301);
             this.txtFilterDownloadUrl.Name = "txtFilterDownloadUrl";
             this.txtFilterDownloadUrl.Size = new System.Drawing.Size(762, 30);
-            this.txtFilterDownloadUrl.TabIndex = 7;
+            this.txtFilterDownloadUrl.TabIndex = 9;
             this.txtFilterDownloadUrl.Validating += new System.ComponentModel.CancelEventHandler(this.txtFilterDownloadUrl_Validating);
             // 
             // lblFilterDownloadUrl
@@ -141,7 +160,7 @@ namespace IxothPodFilterDownloader
             this.lblFilterDownloadUrl.Location = new System.Drawing.Point(268, 272);
             this.lblFilterDownloadUrl.Name = "lblFilterDownloadUrl";
             this.lblFilterDownloadUrl.Size = new System.Drawing.Size(128, 25);
-            this.lblFilterDownloadUrl.TabIndex = 6;
+            this.lblFilterDownloadUrl.TabIndex = 8;
             this.lblFilterDownloadUrl.Text = "Download Url";
             // 
             // txtFilterName
@@ -166,7 +185,7 @@ namespace IxothPodFilterDownloader
             this.btnSaveFilterChanges.Location = new System.Drawing.Point(836, 414);
             this.btnSaveFilterChanges.Name = "btnSaveFilterChanges";
             this.btnSaveFilterChanges.Size = new System.Drawing.Size(197, 41);
-            this.btnSaveFilterChanges.TabIndex = 12;
+            this.btnSaveFilterChanges.TabIndex = 14;
             this.btnSaveFilterChanges.Text = "Save filter changes";
             this.btnSaveFilterChanges.UseVisualStyleBackColor = true;
             this.btnSaveFilterChanges.Click += new System.EventHandler(this.btnSaveFilterChanges_Click);
@@ -190,22 +209,15 @@ namespace IxothPodFilterDownloader
             this.lbFilters.TabIndex = 1;
             this.lbFilters.SelectedIndexChanged += new System.EventHandler(this.lbFilters_SelectedIndexChanged);
             // 
-            // txtFilterDescription
+            // btnRestoreDefaultsFromInternet
             // 
-            this.txtFilterDescription.Location = new System.Drawing.Point(269, 237);
-            this.txtFilterDescription.Name = "txtFilterDescription";
-            this.txtFilterDescription.Size = new System.Drawing.Size(762, 30);
-            this.txtFilterDescription.TabIndex = 14;
-            this.txtFilterDescription.Validating += new System.ComponentModel.CancelEventHandler(this.txtFilterDescription_Validating);
-            // 
-            // lblDescription
-            // 
-            this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(266, 208);
-            this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(109, 25);
-            this.lblDescription.TabIndex = 13;
-            this.lblDescription.Text = "Description";
+            this.btnRestoreDefaultsFromInternet.Location = new System.Drawing.Point(18, 414);
+            this.btnRestoreDefaultsFromInternet.Name = "btnRestoreDefaultsFromInternet";
+            this.btnRestoreDefaultsFromInternet.Size = new System.Drawing.Size(235, 41);
+            this.btnRestoreDefaultsFromInternet.TabIndex = 15;
+            this.btnRestoreDefaultsFromInternet.Text = "Restore defaults";
+            this.btnRestoreDefaultsFromInternet.UseVisualStyleBackColor = true;
+            this.btnRestoreDefaultsFromInternet.Click += new System.EventHandler(this.btnRestoreDefaultsFromInternet_Click);
             // 
             // frmAdmin
             // 
@@ -244,5 +256,6 @@ namespace IxothPodFilterDownloader
         private System.Windows.Forms.Label lblAuthor;
         private System.Windows.Forms.TextBox txtFilterDescription;
         private System.Windows.Forms.Label lblDescription;
+        private System.Windows.Forms.Button btnRestoreDefaultsFromInternet;
     }
 }

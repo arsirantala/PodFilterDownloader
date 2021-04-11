@@ -221,5 +221,28 @@ namespace IxothPodFilterDownloader
         {
             TextboxValidatorHelper(txtFilterDescription);
         }
+
+        private void btnRestoreDefaultsFromInternet_Click(object sender, EventArgs e)
+        {
+            btnRestoreDefaultsFromInternet.Enabled = false;
+
+            if (MessageBox.Show("Are you sure you want to restore default filters? This will override every filters you have defined in this application.",
+                "Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                string content = UpdateAndDownload.DownloadFileContent("https://raw.githubusercontent.com/arsirantala/PodFilterDownloader/main/Configuration.ini");
+                if (!string.IsNullOrEmpty(content))
+                {
+                    File.WriteAllText(_configFile, content);
+                    RefreshLB();
+                }
+                else
+                {
+                    MessageBox.Show("There was an error when attempted to download the default Configuration.ini file from the applications home repo in the internet. Please try again later.",
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+            btnRestoreDefaultsFromInternet.Enabled = true;
+        }
     }
 }

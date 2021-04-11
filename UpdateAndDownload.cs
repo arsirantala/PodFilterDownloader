@@ -216,6 +216,24 @@ namespace IxothPodFilterDownloader
             return output;
         }
 
+        public static string DownloadFileContent(string url)
+        {
+            string content = string.Empty;
+
+            using (var wc = new WebClient())
+            {
+                try
+                {
+                    content = wc.DownloadString(new Uri(url));
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            return content;
+        }
+
         private static FilterContentDataModel GetFilterContent(IniData iniData, string filter)
         {
             FilterContentDataModel output = new FilterContentDataModel { FilterName = filter };
