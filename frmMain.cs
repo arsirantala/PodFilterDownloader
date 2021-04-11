@@ -60,6 +60,7 @@ namespace IxothPodFilterDownloader
             // persist the checkbox states on the filter files
             foreach (ListViewItem lvFiltersItem in lvFilters.Items)
             {
+                // TODO if user removed some filter (via admin form) handle saving below!
                 test = _data[lvFiltersItem.Text].GetKeyData("selected_for_updates");
                 test.Value = lvFiltersItem.Checked.ToString();
                 _data[lvFiltersItem.Text].SetKeyData(test);
@@ -409,6 +410,8 @@ namespace IxothPodFilterDownloader
 
         private void toolStripMenuItemFileFilterAdmin_Click(object sender, EventArgs e)
         {
+            _parser.WriteFile(_configFile, _data);
+
             frmAdmin admin = new frmAdmin();
             admin.ShowDialog(this);
             admin.Dispose();
@@ -416,6 +419,9 @@ namespace IxothPodFilterDownloader
             // Reload the data just in case
             _data = _parser.ReadFile(_configFile);
             RefreshContent();
+            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, 
+                _data, rbAvailable, btnInstallSelected, btnDownloadUpdatedFilters, 
+                btnRemoveSelected, btnMoreInfoOnSelectedFilter);
         }
     }
 }

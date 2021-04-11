@@ -61,14 +61,9 @@ namespace IxothPodFilterDownloader
             }
             else
             {
-                if (UpdateAndDownload.HasSha256Tags(filter, data))
-                {
-                    updatesFound = UpdateAndDownload.Sha256Check(filter, data);
-                }
-                else
-                {
-                    updatesFound = UpdateAndDownload.ContentLengthCheck(filter, data);
-                }
+                updatesFound = UpdateAndDownload.HasSha256Tags(filter, data) ? 
+                    UpdateAndDownload.Sha256Check(filter, data) : 
+                    UpdateAndDownload.ContentLengthCheck(filter, data);
             }
 
             return updatesFound;
@@ -244,8 +239,9 @@ namespace IxothPodFilterDownloader
 
                     // Add ListViewItem
                     listView.Items.Add(new ListViewItem(
-                        new[] { section.SectionName, filterExists ? CheckIfFilterHasUpdate(data, section.SectionName) == UpdateAndDownload.BoolEnum.True ?
-                                rm.GetString("frmMain_UpdateAvailable") : rm.GetString("frmMain_Installed") :
+                        new[] { section.SectionName, filterExists ? 
+                                CheckIfFilterHasUpdate(data, section.SectionName) == UpdateAndDownload.BoolEnum.True ?
+                                rm.GetString("frmMain_Update_available") : rm.GetString("frmMain_Installed") :
                                 rm.GetString("frmMain_Available"),
                             data[section.SectionName].GetKeyData("description").Value }, lvg));
                     listView.Items[listView.Items.Count - 1].Tag = section.SectionName;
