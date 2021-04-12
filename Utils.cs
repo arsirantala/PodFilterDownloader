@@ -15,6 +15,12 @@ namespace IxothPodFilterDownloader
     public static class Utils
     {
         private static readonly SHA256 Sha256 = SHA256.Create();
+        private static readonly ResourceManager _rm = new ResourceManager(typeof(frmMain));
+
+        public static string GetLocalizedString(string id)
+        {
+            return _rm.GetString(id);
+        }
 
 
         public static void UpdateButtonStates(RadioButton rbInstalled, ListView lvFilters, Button btnRemoveSelected,
@@ -79,11 +85,8 @@ namespace IxothPodFilterDownloader
         /// </summary>
         /// <param name="lvFilters"></param>
         /// <param name="data"></param>
-        /// <param name="rm"></param>
-        /// <param name="btnCancel"></param>
-        /// <param name="btnRefresh"></param>
         /// <returns></returns>
-        public static bool CheckIfInstalledFiltersHasUpdates(ListView lvFilters, IniData data, ResourceManager rm)
+        public static bool CheckIfInstalledFiltersHasUpdates(ListView lvFilters, IniData data)
         {
             bool updatesFound = false;
 
@@ -96,13 +99,13 @@ namespace IxothPodFilterDownloader
                 if (CheckFilterHasUpdateHelper(data, lvFiltersItem.Text) == UpdateAndDownload.BoolEnum.True)
                 {
                     lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
-                        rm.GetString("frmMain_Update_available");
+                        GetLocalizedString("frmMain_Update_available");
                     updatesFound = true;
                 }
                 else
                 {
                     lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = 
-                        rm.GetString("frmMain_Installed");
+                        GetLocalizedString("frmMain_Installed");
                 }
             }
 
@@ -183,7 +186,6 @@ namespace IxothPodFilterDownloader
         /// </summary>
         /// <param name="listView"></param>
         /// <param name="rbInstalled"></param>
-        /// <param name="rm"></param>
         /// <param name="PodInstallationLoc"></param>
         /// <param name="data"></param>
         /// <param name="rbAvailable"></param>
@@ -191,7 +193,7 @@ namespace IxothPodFilterDownloader
         /// <param name="btnDownloadUpdatedFilters"></param>
         /// <param name="btnRemoveSelected"></param>
         /// <param name="btnMoreInfoOnSelectedFilter"></param>
-        public static void UpdateListview(ListView listView, RadioButton rbInstalled, ResourceManager rm, string PodInstallationLoc,
+        public static void UpdateListview(ListView listView, RadioButton rbInstalled, string PodInstallationLoc,
             IniData data, RadioButton rbAvailable, Button btnInstallSelected, Button btnDownloadUpdatedFilters, Button btnRemoveSelected,
             Button btnMoreInfoOnSelectedFilter)
         {
@@ -208,9 +210,9 @@ namespace IxothPodFilterDownloader
             listView.View = View.Details;
             listView.FullRowSelect = true;
             listView.CheckBoxes = rbInstalled.Checked;
-            listView.Columns.Add(rm.GetString("frmMain_Filter"), -1, HorizontalAlignment.Left);
-            listView.Columns.Add(rm.GetString("frmMain_State"), -1, HorizontalAlignment.Left);
-            listView.Columns.Add(rm.GetString("frmMain_Description"), -1, HorizontalAlignment.Left);
+            listView.Columns.Add(_rm.GetString("frmMain_Filter"), -1, HorizontalAlignment.Left);
+            listView.Columns.Add(_rm.GetString("frmMain_State"), -1, HorizontalAlignment.Left);
+            listView.Columns.Add(_rm.GetString("frmMain_Description"), -1, HorizontalAlignment.Left);
 
             foreach (var section in data.Sections)
             {
@@ -241,8 +243,8 @@ namespace IxothPodFilterDownloader
                     listView.Items.Add(new ListViewItem(
                         new[] { section.SectionName, filterExists ? 
                                 CheckIfFilterHasUpdate(data, section.SectionName) == UpdateAndDownload.BoolEnum.True ?
-                                rm.GetString("frmMain_Update_available") : rm.GetString("frmMain_Installed") :
-                                rm.GetString("frmMain_Available"),
+                                _rm.GetString("frmMain_Update_available") : _rm.GetString("frmMain_Installed") :
+                                _rm.GetString("frmMain_Available"),
                             data[section.SectionName].GetKeyData("description").Value }, lvg));
                     listView.Items[listView.Items.Count - 1].Tag = section.SectionName;
                     listView.Items[listView.Items.Count - 1].Checked = bool.Parse(data[section.SectionName].GetKeyData("selected_for_updates").Value);

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -157,8 +156,7 @@ namespace IxothPodFilterDownloader
             {
                 Parallel.ForEach(sources, (filter) =>
                 {
-                    FilterHttpHeaderDataModel results = new FilterHttpHeaderDataModel();
-                    results = GetFilterHttpHeaders(iniData, filter);
+                    var results = GetFilterHttpHeaders(iniData, filter);
                     output.Add(results);
 
                     report.PercentageComplete = (output.Count * 100) / sources.Count;
@@ -228,6 +226,7 @@ namespace IxothPodFilterDownloader
                 }
                 catch (Exception)
                 {
+                    // TODO add logging to Windows events
                 }
             }
 

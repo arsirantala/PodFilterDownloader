@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Resources;
 using System.Threading;
 using System.Windows.Forms;
 using IniParser;
@@ -20,7 +19,6 @@ namespace IxothPodFilterDownloader
         private string _configFile;
         private IniData _data;
         private readonly FileIniDataParser _parser = new FileIniDataParser();
-        private readonly ResourceManager _rm = new ResourceManager(typeof(frmMain));
         readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private FileSystemWatcher _fsw;
 
@@ -40,7 +38,7 @@ namespace IxothPodFilterDownloader
             if (result == DialogResult.OK)
             {
                 txtPodInstallationLoc.Text = browserDialog.SelectedPath.Trim();
-                Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
+                Utils.UpdateListview(lvFilters, rbInstalled, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
                     btnDownloadUpdatedFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter);
 
                 RefreshContent();
@@ -80,7 +78,7 @@ namespace IxothPodFilterDownloader
         {
             if (lvFilters.SelectedItems.Count == 0)
             {
-                MessageBox.Show(_rm.GetString("frmMain_No_Filter_Selected_In_LV"), _rm.GetString("frmMain_Error"), MessageBoxButtons.OK,
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_No_Filter_Selected_In_LV"), Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
@@ -94,7 +92,7 @@ namespace IxothPodFilterDownloader
 
             if (xpProgressBar.Position >= xpProgressBar.PositionMax)
             {
-                xpProgressBar.Text = _rm.GetString("frmMain_Operation_completed");
+                xpProgressBar.Text = Utils.GetLocalizedString("frmMain_Operation_completed");
             }
         }
 
@@ -141,7 +139,7 @@ namespace IxothPodFilterDownloader
 
         private void rbInstalled_CheckedChanged(object sender, EventArgs e)
         {
-            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, 
+            Utils.UpdateListview(lvFilters, rbInstalled, txtPodInstallationLoc.Text, _data, 
                 rbAvailable, btnInstallSelected, btnDownloadUpdatedFilters, btnRemoveSelected, 
                 btnMoreInfoOnSelectedFilter);
 
@@ -153,20 +151,20 @@ namespace IxothPodFilterDownloader
         {
             if (!rbInstalled.Checked)
             {
-                MessageBox.Show(_rm.GetString("frmMain_Please_check_the_installed_radio_button"), _rm.GetString("frmMain_Feature_not_available"),
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_Please_check_the_installed_radio_button"), Utils.GetLocalizedString("frmMain_Feature_not_available"),
                     MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
             if (lvFilters.SelectedItems.Count == 0)
             {
-                MessageBox.Show(_rm.GetString("frmMain_No_Filter_Selected_In_LV"), _rm.GetString("frmMain_Error"), MessageBoxButtons.OK,
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_No_Filter_Selected_In_LV"), Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
 
             // ReSharper disable once LocalizableElement
-            if (MessageBox.Show($"{_rm.GetString("frmMain_Are_you_sure_you_want_to_remove_file")}", _rm.GetString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show($"{Utils.GetLocalizedString("frmMain_Are_you_sure_you_want_to_remove_file")}", Utils.GetLocalizedString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 File.Delete($"{txtPodInstallationLoc.Text}\\{FilterDirectoryName}\\{lvFilters.SelectedItems[0].Text}.filter");
             }
@@ -219,26 +217,26 @@ namespace IxothPodFilterDownloader
             }
 
             // Populate listview with installed filters
-            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
+            Utils.UpdateListview(lvFilters, rbInstalled, txtPodInstallationLoc.Text, _data, rbAvailable, btnInstallSelected,
                 btnDownloadUpdatedFilters, btnRemoveSelected, btnMoreInfoOnSelectedFilter);
 
             // Localize the form
-            rbAvailable.Text = _rm.GetString("frmMain_Available");
-            rbInstalled.Text = _rm.GetString("frmMain_Installed");
-            gbPoDInstallLocation.Text = _rm.GetString("frmMain_gbPoD_Install_Location");
-            gbInstalled_Available.Text = _rm.GetString("frmMain_gbInstalled_Available");
-            gbOuter.Text = _rm.GetString("frmMain_gbOuter");
-            btnRefresh.Text = _rm.GetString("frmMain_btnRefresh");
-            btnRemoveSelected.Text = _rm.GetString("frmMain_btnRemove_Selected");
-            btnMoreInfoOnSelectedFilter.Text = _rm.GetString("frmMain_btnMore_Info_On_Selected_Filter");
-            btnInstallSelected.Text = _rm.GetString("frmMain_btnInstall_Selected");
-            btnDownloadUpdatedFilters.Text = _rm.GetString("frmMain_btnDownload_updates");
-            toolStripMenuItemFile.Text = _rm.GetString("frmMain_File_Menu");
-            toolStripMenuItemHelp.Text = _rm.GetString("frmMain_Help_Menu");
-            toolStripMenuItemFileExit.Text = _rm.GetString("frmMain_File_Exit_Menuitem");
-            toolStripMenuItemHelpAbout.Text = _rm.GetString("frmMain_About");
-            btnCancel.Text = _rm.GetString("frmMain_Cancel");
-            xpProgressBar.Text = _rm.GetString("frmMain_Checking_updates_from_servers");
+            rbAvailable.Text = Utils.GetLocalizedString("frmMain_Available");
+            rbInstalled.Text = Utils.GetLocalizedString("frmMain_Installed");
+            gbPoDInstallLocation.Text = Utils.GetLocalizedString("frmMain_gbPoD_Install_Location");
+            gbInstalled_Available.Text = Utils.GetLocalizedString("frmMain_gbInstalled_Available");
+            gbOuter.Text = Utils.GetLocalizedString("frmMain_gbOuter");
+            btnRefresh.Text = Utils.GetLocalizedString("frmMain_btnRefresh");
+            btnRemoveSelected.Text = Utils.GetLocalizedString("frmMain_btnRemove_Selected");
+            btnMoreInfoOnSelectedFilter.Text = Utils.GetLocalizedString("frmMain_btnMore_Info_On_Selected_Filter");
+            btnInstallSelected.Text = Utils.GetLocalizedString("frmMain_btnInstall_Selected");
+            btnDownloadUpdatedFilters.Text = Utils.GetLocalizedString("frmMain_btnDownload_updates");
+            toolStripMenuItemFile.Text = Utils.GetLocalizedString("frmMain_File_Menu");
+            toolStripMenuItemHelp.Text = Utils.GetLocalizedString("frmMain_Help_Menu");
+            toolStripMenuItemFileExit.Text = Utils.GetLocalizedString("frmMain_File_Exit_Menuitem");
+            toolStripMenuItemHelpAbout.Text = Utils.GetLocalizedString("frmMain_About");
+            btnCancel.Text = Utils.GetLocalizedString("frmMain_Cancel");
+            xpProgressBar.Text = Utils.GetLocalizedString("frmMain_Checking_updates_from_servers");
 
             RefreshContent();
         }
@@ -326,7 +324,7 @@ namespace IxothPodFilterDownloader
                     {
                         btnInstallSelected.Enabled = true;
                     }
-                    MessageBox.Show($"Error downloading the {result.FilterName}. Error was: {result.HttpStatusCode}", _rm.GetString("frmMain_Error"),
+                    MessageBox.Show($"Error downloading the {result.FilterName}. Error was: {result.HttpStatusCode}", Utils.GetLocalizedString("frmMain_Error"),
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
@@ -348,7 +346,7 @@ namespace IxothPodFilterDownloader
             {
                 btnCancel.Enabled = true;
 
-                xpProgressBar.Text = _rm.GetString("frmMain_Installing_selected_filter");
+                xpProgressBar.Text = Utils.GetLocalizedString("frmMain_Installing_selected_filter");
 
                 btnInstallSelected.Enabled = false;
 
@@ -359,7 +357,7 @@ namespace IxothPodFilterDownloader
             else
             {
                 btnInstallSelected.Enabled = false;
-                MessageBox.Show(_rm.GetString("frmMain_No_Filter_Selected_In_LV"), _rm.GetString("frmMain_Error"),
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_No_Filter_Selected_In_LV"), Utils.GetLocalizedString("frmMain_Error"),
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -368,24 +366,24 @@ namespace IxothPodFilterDownloader
         {
             if (!rbInstalled.Checked)
             {
-                MessageBox.Show(_rm.GetString("frmMain_Please_check_the_installed_radio_button"), _rm.GetString("frmMain_Feature_not_available"),
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_Please_check_the_installed_radio_button"), Utils.GetLocalizedString("frmMain_Feature_not_available"),
                     MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
             if (lvFilters.CheckedItems.Count == 0)
             {
-                MessageBox.Show(_rm.GetString("frmMain_Click_Please_use_checkboxes_to_select_some_filtes_you_want_to_update_first"), _rm.GetString("frmMain_Feature_not_available"),
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_Click_Please_use_checkboxes_to_select_some_filtes_you_want_to_update_first"), Utils.GetLocalizedString("frmMain_Feature_not_available"),
                     MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
 
             btnDownloadUpdatedFilters.Enabled = false;
 
-            xpProgressBar.Text = _rm.GetString("frmMain_Updating_selected_filters");
+            xpProgressBar.Text = Utils.GetLocalizedString("frmMain_Updating_selected_filters");
 
             List<string> filters = (from ListViewItem lvFiltersItem in lvFilters.Items
-                                    where lvFiltersItem.SubItems[1].Text == _rm.GetString("frmMain_Update_available")
+                                    where lvFiltersItem.SubItems[1].Text == Utils.GetLocalizedString("frmMain_Update_available")
                                     where lvFiltersItem.Checked
                                     select lvFiltersItem.Text).ToList();
 
@@ -405,7 +403,7 @@ namespace IxothPodFilterDownloader
 
             PersistServerETagAndContentLengthOfInstalledFilters();
 
-            btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data, _rm);
+            btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data);
         }
 
         private void toolStripMenuItemFileFilterAdmin_Click(object sender, EventArgs e)
@@ -419,7 +417,7 @@ namespace IxothPodFilterDownloader
             // Reload the data just in case
             _data = _parser.ReadFile(_configFile);
             RefreshContent();
-            Utils.UpdateListview(lvFilters, rbInstalled, _rm, txtPodInstallationLoc.Text, 
+            Utils.UpdateListview(lvFilters, rbInstalled, txtPodInstallationLoc.Text, 
                 _data, rbAvailable, btnInstallSelected, btnDownloadUpdatedFilters, 
                 btnRemoveSelected, btnMoreInfoOnSelectedFilter);
         }
