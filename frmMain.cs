@@ -58,7 +58,6 @@ namespace IxothPodFilterDownloader
             // persist the checkbox states on the filter files
             foreach (ListViewItem lvFiltersItem in lvFilters.Items)
             {
-                // TODO if user removed some filter (via admin form) handle saving below!
                 test = _data[lvFiltersItem.Text].GetKeyData("selected_for_updates");
                 test.Value = lvFiltersItem.Checked.ToString();
                 _data[lvFiltersItem.Text].SetKeyData(test);
@@ -130,7 +129,8 @@ namespace IxothPodFilterDownloader
                 }
                 else
                 {
-                    // TODO
+                    lvFilters.FindItemWithText(result.FilterName).SubItems[1].Text = Utils.GetLocalizedString("frmMain_File_unavailable_in_server");
+                    lvFilters.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 }
             }
 
@@ -316,7 +316,6 @@ namespace IxothPodFilterDownloader
                 }
                 else
                 {
-                    // TODO
                     dontRemove = true;
     
                     // Restore the install selected button back to enabled, so user can retry the download of selected filter in case of error
@@ -324,8 +323,9 @@ namespace IxothPodFilterDownloader
                     {
                         btnInstallSelected.Enabled = true;
                     }
-                    MessageBox.Show($"Error downloading the {result.FilterName}. Error was: {result.HttpStatusCode}", Utils.GetLocalizedString("frmMain_Error"),
-                        MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(string.Format(Utils.GetLocalizedString("frmMain_Error_downloading_0_Error_was_1"),
+                            result.FilterName, result.HttpStatusCode), Utils.GetLocalizedString("frmMain_Error"),
+                            MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
 
@@ -373,7 +373,7 @@ namespace IxothPodFilterDownloader
 
             if (lvFilters.CheckedItems.Count == 0)
             {
-                MessageBox.Show(Utils.GetLocalizedString("frmMain_Click_Please_use_checkboxes_to_select_some_filtes_you_want_to_update_first"), Utils.GetLocalizedString("frmMain_Feature_not_available"),
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_Click_Please_use_checkboxes_to_select_some_filter_you_want_to_update_first"), Utils.GetLocalizedString("frmMain_Feature_not_available"),
                     MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
                 return;
             }
