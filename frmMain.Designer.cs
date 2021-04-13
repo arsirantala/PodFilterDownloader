@@ -47,11 +47,13 @@
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.toolStripMenuItemFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemFileFilterAdmin = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItemFileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItemFileFilterAdmin = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemVisitApplicationHomeRepository = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.gbOuter.SuspendLayout();
             this.gbPoDInstallLocation.SuspendLayout();
             this.gbInstalled_Available.SuspendLayout();
@@ -275,17 +277,31 @@
             this.toolStripMenuItemFile.Size = new System.Drawing.Size(46, 24);
             this.toolStripMenuItemFile.Text = "File";
             // 
+            // toolStripMenuItemFileFilterAdmin
+            // 
+            this.toolStripMenuItemFileFilterAdmin.Name = "toolStripMenuItemFileFilterAdmin";
+            this.toolStripMenuItemFileFilterAdmin.Size = new System.Drawing.Size(180, 26);
+            this.toolStripMenuItemFileFilterAdmin.Text = "Filter admin...";
+            this.toolStripMenuItemFileFilterAdmin.Click += new System.EventHandler(this.toolStripMenuItemFileFilterAdmin_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(224, 26);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(180, 26);
             this.toolStripMenuItemFileExit.Text = "Exit";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
             // toolStripMenuItemHelp
             // 
             this.toolStripMenuItemHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemHelpAbout});
+            this.toolStripMenuItemHelpAbout,
+            this.toolStripSeparator2,
+            this.toolStripMenuItemVisitApplicationHomeRepository});
             this.toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
             this.toolStripMenuItemHelp.Size = new System.Drawing.Size(55, 24);
             this.toolStripMenuItemHelp.Text = "Help";
@@ -293,21 +309,21 @@
             // toolStripMenuItemHelpAbout
             // 
             this.toolStripMenuItemHelpAbout.Name = "toolStripMenuItemHelpAbout";
-            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(142, 26);
+            this.toolStripMenuItemHelpAbout.Size = new System.Drawing.Size(359, 26);
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
-            // toolStripSeparator1
+            // toolStripMenuItemVisitApplicationHomeRepository
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(221, 6);
+            this.toolStripMenuItemVisitApplicationHomeRepository.Name = "toolStripMenuItemVisitApplicationHomeRepository";
+            this.toolStripMenuItemVisitApplicationHomeRepository.Size = new System.Drawing.Size(359, 26);
+            this.toolStripMenuItemVisitApplicationHomeRepository.Text = "Visit application home repository page...";
+            this.toolStripMenuItemVisitApplicationHomeRepository.Click += new System.EventHandler(this.toolStripMenuItemVisitApplicationHomeRepository_Click);
             // 
-            // toolStripMenuItemFileFilterAdmin
+            // toolStripSeparator2
             // 
-            this.toolStripMenuItemFileFilterAdmin.Name = "toolStripMenuItemFileFilterAdmin";
-            this.toolStripMenuItemFileFilterAdmin.Size = new System.Drawing.Size(224, 26);
-            this.toolStripMenuItemFileFilterAdmin.Text = "Filter admin...";
-            this.toolStripMenuItemFileFilterAdmin.Click += new System.EventHandler(this.toolStripMenuItemFileFilterAdmin_Click);
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(356, 6);
             // 
             // frmMain
             // 
@@ -364,6 +380,8 @@
         private Framework.Controls.XpProgressBar xpProgressBar;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemFileFilterAdmin;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemVisitApplicationHomeRepository;
     }
 }
 

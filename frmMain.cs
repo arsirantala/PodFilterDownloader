@@ -84,7 +84,10 @@ namespace IxothPodFilterDownloader
                 return;
             }
 
-            Process.Start(_data[lvFilters.SelectedItems[0].Text].GetKeyData("home_repo_url").Value);
+            if (UpdateAndDownload.NetworkIsAvailable())
+            {
+                Process.Start(_data[lvFilters.SelectedItems[0].Text].GetKeyData("home_repo_url").Value);
+            }
         }
 
         private void ReportProgress(object sender, ProgressReportModel e)
@@ -440,6 +443,14 @@ namespace IxothPodFilterDownloader
             Utils.UpdateListview(lvFilters, rbInstalled, txtPodInstallationLoc.Text, 
                 _data, rbAvailable, btnInstallSelected, btnDownloadUpdatedFilters, 
                 btnRemoveSelected, btnMoreInfoOnSelectedFilter);
+        }
+
+        private void toolStripMenuItemVisitApplicationHomeRepository_Click(object sender, EventArgs e)
+        {
+            if (UpdateAndDownload.NetworkIsAvailable())
+            {
+                Process.Start("https://github.com/arsirantala/PodFilterDownloader");
+            }
         }
     }
 }

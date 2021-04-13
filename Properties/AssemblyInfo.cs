@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IxothPodFilterDownloader")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Ixoth PoD filter Downloader")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Home Brew")]
 [assembly: AssemblyProduct("IxothPodFilterDownloader")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
