@@ -52,6 +52,8 @@ namespace IxothPodFilterDownloader
 
         private void frmMain_FormClosed(object sender, FormClosedEventArgs e)
         {
+            _fsw.EnableRaisingEvents = false;
+
             var test = _data.Global.GetKeyData("PodInstallLocation");
             test.Value = txtPodInstallationLoc.Text.Trim();
 
@@ -238,6 +240,13 @@ namespace IxothPodFilterDownloader
             btnCancel.Text = Utils.GetLocalizedString("frmMain_Cancel");
             xpProgressBar.Text = Utils.GetLocalizedString("frmMain_Checking_updates_from_servers");
 
+
+            if (!UpdateAndDownload.NetworkIsAvailable())
+            {
+                MessageBox.Show(Utils.GetLocalizedString("frmMain_This_application_requires_internet_connection_in_order_to_work"),
+                    Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
             RefreshContent();
         }
 
@@ -401,9 +410,20 @@ namespace IxothPodFilterDownloader
             Utils.PersistInstalledFiltersSha256AndContentLength(txtPodInstallationLoc.Text, _data, _parser,
                 _configFile);
 
-            PersistServerETagAndContentLengthOfInstalledFilters();
-
-            btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data);
+            if (UpdateAndDownload.NetworkIsAvailable())
+            {
+                PersistServerETagAndContentLengthOfInstalledFilters();
+                btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data);
+            }
+            else
+            {
+                rbInstalled.Enabled = false;
+                rbAvailable.Enabled = false;
+                btnRefresh.Enabled = false;
+                btnMoreInfoOnSelectedFilter.Enabled = false;
+                btnDownloadUpdatedFilters.Enabled = false;
+                xpProgressBar.Text = "";
+            }
         }
 
         private void toolStripMenuItemFileFilterAdmin_Click(object sender, EventArgs e)

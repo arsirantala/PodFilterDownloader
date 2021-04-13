@@ -45,6 +45,11 @@ namespace IxothPodFilterDownloader
                 throw new InvalidOperationException(), @"Configuration.ini");
 
             RefreshLB();
+
+            if (!UpdateAndDownload.NetworkIsAvailable())
+            {
+                btnRestoreDefaultsFromInternet.Enabled = false;
+            }
         }
 
         private void lbFilters_SelectedIndexChanged(object sender, EventArgs e)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using IniParser.Model;
 using IxothPodFilterDownloader.Models;
@@ -10,6 +11,29 @@ namespace IxothPodFilterDownloader
 {
     public static class UpdateAndDownload
     {
+        /// <summary>
+        /// Check if the internet is available
+        /// </summary>
+        /// <remarks>From https://stackoverflow.com/questions/2031824/what-is-the-best-way-to-check-for-internet-connectivity-using-net</remarks>
+        /// <returns>True if its available, false otherwise</returns>
+        public static bool NetworkIsAvailable()
+        {
+            var all = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (var item in all)
+            {
+                if (item.NetworkInterfaceType == NetworkInterfaceType.Loopback)
+                    continue;
+                if (item.Name.ToLower().Contains("virtual") || item.Description.ToLower().Contains("virtual"))
+                    continue; //Exclude virtual networks set up by VMWare and others
+                if (item.OperationalStatus == OperationalStatus.Up)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public enum BoolEnum
         {
             True = 0,
