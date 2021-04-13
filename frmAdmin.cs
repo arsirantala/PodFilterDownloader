@@ -64,13 +64,13 @@ namespace IxothPodFilterDownloader
         {
             if (lbFilters.SelectedItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to remove the filter?",
-                    "Confirmation", MessageBoxButtons.YesNoCancel,
+                if (MessageBox.Show(Utils.GetLocalizedString("frmAdmin_Are_you_sure_you_want_to_remove_the_filter"),
+                    Utils.GetLocalizedString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     var test = _data.Sections;
                     test.RemoveSection(lbFilters.SelectedItem.ToString());
-                    _parser.WriteFile(@"Configuration.ini", _data);
+                    _parser.WriteFile(_configFile, _data);
                     lbFilters.Items.Remove(lbFilters.SelectedItem);
 
                     RefreshLB();
@@ -82,14 +82,16 @@ namespace IxothPodFilterDownloader
         {
             if (!CheckThatInputsAreOK())
             {
-                MessageBox.Show("Check the textboxes, every input is mandatory!", "Error", MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show(Utils.GetLocalizedString("frmAdmin_Check_the_textboxes__every_input_is_mandatory"),
+                    Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (_data.Sections.ContainsSection(txtFilterName.Text.Trim()))
             {
-                MessageBox.Show("Filter is already in the list! You have to change the filter name (so its unique) to be able to add a new filter.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    Utils.GetLocalizedString("frmAdmin_Filter_is_already_in_the_list__You_have_to_change_the_filter_name__so_its_unique__to_be_able_to_add_a_new_filter"), 
+                    Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -137,23 +139,24 @@ namespace IxothPodFilterDownloader
         {
             if (!CheckThatInputsAreOK())
             {
-                MessageBox.Show("Check the textboxes, every input is mandatory!", "Error", MessageBoxButtons.OK,
+                MessageBox.Show(Utils.GetLocalizedString("frmAdmin_Check_the_textboxes__every_input_is_mandatory"), 
+                    Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return;
             }
 
             if (lbFilters.SelectedItem != null)
             {
-                if (MessageBox.Show("Are you sure you want to save changes to the selected filter?",
-                    "Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show(Utils.GetLocalizedString("frmAdmin_Are_you_sure_you_want_to_save_changes_to_the_selected_filter"),
+                    Utils.GetLocalizedString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     txtFilterName.Text = txtFilterName.Text.Trim();
 
                     if (!_data.Sections.ContainsSection(txtFilterName.Text))
                     {
                         MessageBox.Show(
-                            "There is no such filter in the Configuration.ini file, if you wan't to add a nww filter use the 'add filter' button instead!",
-                            "Filter with specified name was not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Utils.GetLocalizedString("frmAdmin_There_is_no_such_filter_in_the_Configuration_ini_file__if_you_wan_t_to_add_a_new_filter_use_the__add_filter__button_instead"),
+                            Utils.GetLocalizedString("frmAdmin_Filter_with_specified_name_was_not_found"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
@@ -222,8 +225,8 @@ namespace IxothPodFilterDownloader
         {
             btnRestoreDefaultsFromInternet.Enabled = false;
 
-            if (MessageBox.Show("Are you sure you want to restore default filters? This will override every filters you have defined in this application.",
-                "Confirmation", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show(Utils.GetLocalizedString("frmAdmin_Are_you_sure_you_want_to_restore_default_filters__This_will_override_every_filters_you_have_defined_in_this_application"),
+                Utils.GetLocalizedString("frmMain_Confirmation"), MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 string content = UpdateAndDownload.DownloadFileContent("https://raw.githubusercontent.com/arsirantala/PodFilterDownloader/main/Configuration.ini");
                 if (!string.IsNullOrEmpty(content))
@@ -233,8 +236,8 @@ namespace IxothPodFilterDownloader
                 }
                 else
                 {
-                    MessageBox.Show("There was an error when attempted to download the default Configuration.ini file from the applications home repo in the internet. Please try again later.",
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Utils.GetLocalizedString("frmAdmin_There_was_an_error_when_attempted_to_download_the_default_Configuration_ini_file_from_the_applications_home_repo_in_the_internet__Please_try_again_later"),
+                        Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
 
