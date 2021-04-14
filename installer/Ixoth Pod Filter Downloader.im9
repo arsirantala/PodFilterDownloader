@@ -10,7 +10,7 @@ project Flags=0x20 {
 		language __label="englanti (Yhdysvallat)", ID=1033;
 	}
 	configs {
-		config InstallMate: Flags=0xC1, LangMode=0, Languages="0=", InstallName=IxothPodFilterDownloader_Setup.exe, BuildFolder="<ProjectFolder>", PasswordFlags=0x0, ManifestType=1, ManifestPath="<ProjectFolder>\\<ProductName>_Manifest.xml", PackListPath="<ProjectFolder>\\<ProductName>_PackList.txt", ReportType=0, TsuType=0, StubSet=Administrator, Compressor=0, CompressLevel=5, Packaging=0, DiskSpan=0, FileVersion=0, SpanSize=1073741824, FirstSpanReserve=0 {
+		config InstallMate: Flags=0xC1, LangMode=0, Languages="0=", InstallName=IxothPodFilterDownloader_Setup.exe, BuildFolder="<ProjectFolder>", PasswordFlags=0x0, ManifestType=1, ManifestPath="<ProjectFolder>\\<ProductName>_Manifest.xml", PackListPath="<ProjectFolder>\\<ProductName>_PackList.txt", ReportType=0, ReportPath="<ProjectFolder>\\<ProjectName>\\<BuildName>(<ProductVersion>)-Contents.rtf", TsuType=0, StubSet=Administrator, Compressor=0, CompressLevel=5, Packaging=0, DiskSpan=0, FileVersion=0, SpanSize=1073741824, FirstSpanReserve=0 {
 			LogFilter MinLevel=4, Flags=0x100FC, LogAlways="BLD:Q0085", LogNever="BLD:I0027,BLD:Q0076,BLD:Q0081,BLD:Q0091";
 			SignCode2 SignSHA1=1, SignSHA2=0, Verbose=1, Debug=1, ShowConsole=1, Timestamp=1, Timestamp3161=1, CertType=0, TimestampURL="http://timestamp.digicert.com", Timestamp3161URL="http://timestamp.digicert.com";
 		}
@@ -291,7 +291,7 @@ project Flags=0x20 {
 			str Value: Default=7775;
 		}
 		var BuildFolder: Flags=0x5, Type=1, Description="Folder containing the build target" {
-			str Value: Default="C:\\Users\\arsir\\Documents\\IxothPoDFilterDownloaderInstaller";
+			str Value: Default="C:\\Users\\arsir\\Documents\\PodFilterDownloader\\installer";
 		}
 		var BuildName: Flags=0x5, Type=0, Description="Build configuration name" {
 			str Value: Default=InstallMate;
@@ -300,10 +300,10 @@ project Flags=0x20 {
 			str Value: Default="Serial# 0D60C39372C7D2F6-04010108";
 		}
 		var BuildTarget: Flags=0x5, Type=1, Description="Build target file path" {
-			str Value: Default="C:\\Users\\arsir\\Documents\\IxothPoDFilterDownloaderInstaller\\IxothPodFilterDownloader_Setup.exe";
+			str Value: Default="C:\\Users\\arsir\\Documents\\PodFilterDownloader\\installer\\IxothPodFilterDownloader_Setup.exe";
 		}
 		var BuildTime: Flags=0x5, Type=0, Description="Build time as HHMMSS" {
-			str Value: Default=000548;
+			str Value: Default=234146;
 		}
 		var BuildType: Flags=0x5, Type=0, Description="Build type: always TSU" {
 			str Value: Default=TSU;
@@ -601,7 +601,7 @@ project Flags=0x20 {
 			str Value: Default="<MSOfficeDir14=MSOfficeDir12=MSOfficeDir11=MSOfficeDir10=MSOfficeDir9=MSOfficeDir8=!<ProgramFilesFolder>\\Microsoft Office\\Office>";
 		}
 		var PackageCode: Flags=0x205, Type=0, Description="Distribution package GUID" {
-			str Value: Default="{C00C8AED-F421-41A8-4885-CCACAC30151F}";
+			str Value: Default="{EF8449E6-FF4B-40AF-4982-C7C683B8D614}";
 		}
 		var PersonalFolder: Flags=0x244, Type=1, Description="Current User Documents folder" {
 			str Value: Default="<$shpath(5)=@<ShellFoldersCU>\\Personal=_LocPersonalFolder>";
@@ -664,13 +664,13 @@ project Flags=0x20 {
 			str Value: Default="<$shpath(2)=@<ShellFoldersCU>\\Programs=_LocProgramMenuFolder>";
 		}
 		var ProjectFolder: Flags=0x5, Type=1, Description="Folder containing the InstallMate project file" {
-			str Value: Default="C:\\Users\\arsir\\Documents\\IxothPoDFilterDownloaderInstaller";
+			str Value: Default="C:\\Users\\arsir\\Documents\\PodFilterDownloader\\installer";
 		}
 		var ProjectName: Flags=0x5, Type=0, Description="InstallMate project file base name" {
 			str Value: Default="Ixoth Pod Filter Downloader";
 		}
 		var ProjectPath: Flags=0x5, Type=1, Description="Fully qualified path to the InstallMate project file" {
-			str Value: Default="C:\\Users\\arsir\\Documents\\IxothPoDFilterDownloaderInstaller\\Ixoth Pod Filter Downloader.im9";
+			str Value: Default="C:\\Users\\arsir\\Documents\\PodFilterDownloader\\installer\\Ixoth Pod Filter Downloader.im9";
 		}
 		var PublicFolder: Flags=0x244, Type=1, Description="Public (All Users shared) root folder" {
 			str Value: Default="<$shpath({DFDF76A2-C82A-4D63-906A-5644AC457385})=CommonProfileFolder>";
@@ -763,7 +763,7 @@ project Flags=0x20 {
 			str Value: Default="<$sysval(4)>";
 		}
 		var SessionID: Flags=0x204, Type=0, Description="Pseudo-random 8-character session identifier" {
-			str Value: Default="060BABB9";
+			str Value: Default="9094DBC4";
 		}
 		var ShellFoldersCU: Flags=0x20C, Type=2, Description="Current User Shell folders registry key" {
 			str Value: Default="<HKCU>\\<WinCurVer>\\Explorer\\Shell Folders";
@@ -920,7 +920,7 @@ project Flags=0x20 {
 			str Value: Default="<TsuStatus>";
 		}
 		var UpdateURL: Flags=0x204, Type=0, Description="Product update URL" {
-			str Value: Default="https://github.com/arsirantala/IxothPoDFilterDownloaderInstaller/releases";
+			str Value: Default="https://github.com/arsirantala/IxothPoDFilterDownloader/releases";
 		}
 		var UserField1: Flags=0x204, Type=0, Description="Product registration field #1" {
 			str Value: Default="<RegOwner>";
@@ -964,7 +964,7 @@ project Flags=0x20 {
 			str Value: Default="<$sysval(15)>";
 		}
 		var WebSite: Flags=0x204, Type=0, Description="Product information URL" {
-			str Value: Default="https://github.com/arsirantala/IxothPoDFilterDownloaderInstaller";
+			str Value: Default="https://github.com/arsirantala/IxothPoDFilterDownloader";
 		}
 		var WinCurVer: Flags=0x20C, Type=0, Description="Registry path to Windows information" {
 			str Value: Default="Software\\Microsoft\\Windows\\CurrentVersion";
@@ -4232,22 +4232,22 @@ project Flags=0x20 {
 					}
 					folder LocalProductAppDataFolder: Flags=0x0, Traits=0x80000000, InstallAction=0, RemoveAction=1 {
 						str Name: Default="<ProductName>";
-						file Configuration.ini_C5E587948854CCFD: Flags=0x0, Component=Product, Path="..\\PodFilterDownloader\\bin\\Release\\Configuration.ini", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=0, Packaging=0 {
+						file Configuration.ini_C5E587948854CCFD: Flags=0x0, Component=Product, Path="..\\bin\\Release\\Configuration.ini", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=0, Packaging=0 {
 							str Name: Default=Configuration.ini;
 						}
-						file Framework.Controls.ProgressBar.dll_EC1B5BF478ECEFB3: Flags=0x0, Component=Added_20210408194526, Path="..\\PodFilterDownloader\\bin\\Release\\Framework.Controls.ProgressBar.dll", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=1000, Packaging=0 {
+						file Framework.Controls.ProgressBar.dll_EC1B5BF478ECEFB3: Flags=0x0, Component=Added_20210408194526, Path="..\\bin\\Release\\Framework.Controls.ProgressBar.dll", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=1000, Packaging=0 {
 							str Name: Default=Framework.Controls.ProgressBar.dll;
 						}
-						file INIFileParser.dll_7115E5C2203EA6B4: Flags=0x0, Component=INIFileParser_2.5.2.0_79af7b307b65cf3c_MSIL_9BD57673034A3448, Path="..\\PodFilterDownloader\\bin\\Release\\INIFileParser.dll", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=1000, Packaging=0 {
+						file INIFileParser.dll_7115E5C2203EA6B4: Flags=0x0, Component=INIFileParser_2.5.2.0_79af7b307b65cf3c_MSIL_9BD57673034A3448, Path="..\\bin\\Release\\INIFileParser.dll", Attributes=0x0, InstallAction=4, RemoveAction=2, Registration=0, RegOrder=1000, Packaging=0 {
 							str Name: Default=INIFileParser.dll;
 						}
-						file INIFileParser.xml_181AACEC68995382: Flags=0x0, Component=Product, Path="..\\PodFilterDownloader\\bin\\Release\\INIFileParser.xml", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=0, Packaging=0 {
+						file INIFileParser.xml_181AACEC68995382: Flags=0x0, Component=Product, Path="..\\bin\\Release\\INIFileParser.xml", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=0, Packaging=0 {
 							str Name: Default=INIFileParser.xml;
 						}
-						file IxothPodFilterDownloader.exe.config_AB76DB388B265B0D: Flags=0x0, Component=Product, Path="..\\PodFilterDownloader\\bin\\Release\\IxothPodFilterDownloader.exe.config", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=0, Packaging=0 {
+						file IxothPodFilterDownloader.exe.config_AB76DB388B265B0D: Flags=0x0, Component=Product, Path="..\\bin\\Release\\IxothPodFilterDownloader.exe.config", Attributes=0x0, InstallAction=1, RemoveAction=2, Registration=0, RegOrder=0, Packaging=0 {
 							str Name: Default=IxothPodFilterDownloader.exe.config;
 						}
-						file IxothPodFilterDownloader.exe_8FD41DB14E36C72B: Flags=0x0, Component=Product, Path="..\\PodFilterDownloader\\bin\\Release\\IxothPodFilterDownloader.exe", Attributes=0x0, InstallAction=5, RemoveAction=2, Registration=0, RegOrder=2000, Packaging=0 {
+						file IxothPodFilterDownloader.exe_8FD41DB14E36C72B: Flags=0x0, Component=Product, Path="..\\bin\\Release\\IxothPodFilterDownloader.exe", Attributes=0x0, InstallAction=5, RemoveAction=2, Registration=0, RegOrder=2000, Packaging=0 {
 							str Name: Default=IxothPodFilterDownloader.exe;
 						}
 						file twux64.exe_98FCC6BF95B6E9F2: Flags=0x0, Component=Dropped_20210414001527, Path=twux64.exe, Attributes=0x0, InstallAction=4, RemoveAction=2, Registration=0, RegOrder=2000, Packaging=0 {
