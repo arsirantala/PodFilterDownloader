@@ -421,6 +421,7 @@ namespace IxothPodFilterDownloader
             {
                 PersistServerETagAndContentLengthOfInstalledFilters();
                 btnDownloadUpdatedFilters.Enabled = Utils.CheckIfInstalledFiltersHasUpdates(lvFilters, _data);
+                btnRefresh.Enabled = true;
             }
             else
             {

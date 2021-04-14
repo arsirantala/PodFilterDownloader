@@ -105,8 +105,10 @@ namespace IxothPodFilterDownloader
                 }
                 else
                 {
-                    lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text = 
+                    lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].Text =
                         GetLocalizedString("frmMain_Installed");
+                    lvFilters.FindItemWithText(lvFiltersItem.Text).UseItemStyleForSubItems = false;
+                    lvFilters.FindItemWithText(lvFiltersItem.Text).SubItems[1].ForeColor = Color.DarkGreen;
                 }
             }
 
@@ -206,6 +208,8 @@ namespace IxothPodFilterDownloader
                 return;
             }
 
+            bool updatesFound = false;
+
             listView.BeginUpdate();
             listView.Clear();
             listView.View = View.Details;
@@ -254,6 +258,7 @@ namespace IxothPodFilterDownloader
                     if (listView.Items[listView.Items.Count - 1].SubItems[1].Text == _rm.GetString("frmMain_Update_available"))
                     {
                         listView.Items[listView.Items.Count - 1].SubItems[1].ForeColor = Color.Red;
+                        updatesFound = true;
                     }
                     else if (listView.Items[listView.Items.Count - 1].SubItems[1].Text == _rm.GetString("frmMain_Installed"))
                     {
@@ -274,6 +279,10 @@ namespace IxothPodFilterDownloader
             }
             else
             {
+                if (updatesFound)
+                {
+                    btnDownloadUpdatedFilters.Enabled = true;
+                }
                 listView.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView.Columns[1].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView.Columns[2].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
