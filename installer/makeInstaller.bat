@@ -16,6 +16,6 @@ if exist "%ProgramFiles%\InstallMate 9\BinX64\Tin.exe" (
     goto end
 )
 
-Tools\fnr.exe --cl --dir "%cd%" --fileMask "IxothPodFilterDownloader_Setup.txt" --find "InstallerPath=IxothPodFilterDownloader_Setup.exe" --replace "InstallerPath=https://raw.githubusercontent.com/arsirantala/IxothPoDFilterDownloader/installer/master/IxothPodFilterDownloader_Setup.exe"
+Tools\fnr.exe --cl --dir "%cd%" --fileMask "IxothPodFilterDownloader_Setup.txt" --find "InstallerPath=IxothPodFilterDownloader_Setup.exe" --replace "InstallerPath=https://raw.githubusercontent.com/arsirantala/IxothPoDFilterDownloader/installer/main/IxothPodFilterDownloader_Setup.exe"
 
 :end
