@@ -780,4 +780,10 @@
   <data name="frmMain_Filter_admin" xml:space="preserve">
     <value>Filter admin...</value>
   </data>
+  <data name="frmMain_Visit_application_home_repository_page" xml:space="preserve">
+    <value>Visit application home repository page...</value>
+  </data>
+  <data name="frmMain_Visit_application_home_repository_wiki_page" xml:space="preserve">
+    <value>Visit application home repository wiki page...</value>
+  </data>
 </root>

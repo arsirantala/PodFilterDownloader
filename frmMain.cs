@@ -241,6 +241,9 @@ namespace IxothPodFilterDownloader
             toolStripMenuItemFileFilterAdmin.Text = Utils.GetLocalizedString("frmMain_Filter_admin");
             toolStripMenuItemFileExit.Text = Utils.GetLocalizedString("frmMain_File_Exit_Menuitem");
             toolStripMenuItemHelpAbout.Text = Utils.GetLocalizedString("frmMain_About");
+            toolStripMenuItemHelpVisitApplicationHomeWiki.Text =  Utils.GetLocalizedString("frmMain_Visit_application_home_repository_wiki_page");
+            toolStripMenuItemHelpVisitApplicationHomeRepository.Text = Utils.GetLocalizedString("frmMain_Visit_application_home_repository_page");
+
             btnCancel.Text = Utils.GetLocalizedString("frmMain_Cancel");
             xpProgressBar.Text = Utils.GetLocalizedString("frmMain_Checking_updates_from_servers");
 
@@ -446,7 +449,15 @@ namespace IxothPodFilterDownloader
                 btnRemoveSelected, btnMoreInfoOnSelectedFilter);
         }
 
-        private void toolStripMenuItemVisitApplicationHomeRepository_Click(object sender, EventArgs e)
+        private void toolStripMenuItemHelpVisitApplicationHomeWiki_Click(object sender, EventArgs e)
+        {
+            if (UpdateAndDownload.NetworkIsAvailable())
+            {
+                Process.Start("https://github.com/arsirantala/PodFilterDownloader/wiki");
+            }
+        }
+
+        private void toolStripMenuItemHelpVisitApplicationHomeRepository_Click(object sender, EventArgs e)
         {
             if (UpdateAndDownload.NetworkIsAvailable())
             {
