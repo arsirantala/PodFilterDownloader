@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Resources;
@@ -248,6 +249,20 @@ namespace IxothPodFilterDownloader
                             data[section.SectionName].GetKeyData("description").Value }, lvg));
                     listView.Items[listView.Items.Count - 1].Tag = section.SectionName;
                     listView.Items[listView.Items.Count - 1].Checked = bool.Parse(data[section.SectionName].GetKeyData("selected_for_updates").Value);
+                    listView.Items[listView.Items.Count - 1].UseItemStyleForSubItems = false;
+
+                    if (listView.Items[listView.Items.Count - 1].SubItems[1].Text == _rm.GetString("frmMain_Update_available"))
+                    {
+                        listView.Items[listView.Items.Count - 1].SubItems[1].ForeColor = Color.Red;
+                    }
+                    else if (listView.Items[listView.Items.Count - 1].SubItems[1].Text == _rm.GetString("frmMain_Installed"))
+                    {
+                        listView.Items[listView.Items.Count - 1].SubItems[1].ForeColor = Color.DarkGreen;
+                    }
+                    else
+                    {
+                        listView.Items[listView.Items.Count - 1].SubItems[1].ForeColor = Color.Black;
+                    }
                 }
             }
 

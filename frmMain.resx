@@ -777,4 +777,7 @@
   <data name="frmMain_This_application_requires_internet_connection_in_order_to_work" xml:space="preserve">
     <value>This application requires internet connection in order to work!</value>
   </data>
+  <data name="frmMain_Filter_admin" xml:space="preserve">
+    <value>Filter admin...</value>
+  </data>
 </root>

@@ -238,6 +238,7 @@ namespace IxothPodFilterDownloader
             btnDownloadUpdatedFilters.Text = Utils.GetLocalizedString("frmMain_btnDownload_updates");
             toolStripMenuItemFile.Text = Utils.GetLocalizedString("frmMain_File_Menu");
             toolStripMenuItemHelp.Text = Utils.GetLocalizedString("frmMain_Help_Menu");
+            toolStripMenuItemFileFilterAdmin.Text = Utils.GetLocalizedString("frmMain_Filter_admin");
             toolStripMenuItemFileExit.Text = Utils.GetLocalizedString("frmMain_File_Exit_Menuitem");
             toolStripMenuItemHelpAbout.Text = Utils.GetLocalizedString("frmMain_About");
             btnCancel.Text = Utils.GetLocalizedString("frmMain_Cancel");
