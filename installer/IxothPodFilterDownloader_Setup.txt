@@ -9,10 +9,10 @@ Packages=main
 [main]
 ProductCode={324DDCE9-D638-4745-B46A-AE4A2F11950F}
 DisplayName=Ixoth Pod Filter Downloader
-NewsURL=https://github.com/arsirantala/IxothPoDFilterDownloaderInstaller/releases
+NewsURL=https://github.com/arsirantala/IxothPoDFilterDownloader/releases
 DisplayVersion=1.0.1 (2021-04-14 21:37:43)
 Version=1.0.1.0
-InstallerPath= https://raw.githubusercontent.com/arsirantala/IxothPoDFilterDownloaderInstaller/master/IxothPodFilterDownloader_Setup.exe
+InstallerPath= https://raw.githubusercontent.com/arsirantala/IxothPoDFilterDownloader/installer/master/IxothPodFilterDownloader_Setup.exe
 InstallerArgs=/q /b0
 DownloadSize=361984
 
