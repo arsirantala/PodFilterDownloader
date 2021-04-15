@@ -4336,7 +4336,7 @@ project Flags=0x20 {
 							shlink Shortcut1_CA41A9A589D51BC2: Flags=0x0, TargetPath="<#twux64.exe_98FCC6BF95B6E9F2>", WorkDir="<LocalProductAppDataFolder>", IconIndex=0, ShowCmd=0 {
 								str Title: Default="Check for updates for <ProductName>";
 								str Description: Default="Check for updates for <ProductName>";
-								str Arguments: Default="https://raw.githubusercontent.com/arsirantala/PodFilterDownloader/main/installer/IxothPodFilterDownloader_Setup.txt /p:IxothPodFilterDownloader_Setup.exe,IxothPodFIlterDownloader";
+								str Arguments: Default="/f https://raw.githubusercontent.com/arsirantala/PodFilterDownloader/main/installer/IxothPodFilterDownloader_Setup.txt /p:IxothPodFilterDownloader_Setup.exe,IxothPodFIlterDownloader";
 							}
 							shlink Shortcut2_59748E29E0438698: Flags=0x0, TargetPath="<TinProductFolder>\\Setup.exe", WorkDir="<TinProductFolder>", IconIndex=0, ShowCmd=0 {
 								str Title: Default="Uninstall <ProductName>";

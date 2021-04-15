@@ -524,7 +524,7 @@ namespace IxothPodFilterDownloader
                 string updateChecker = Path.Combine(
                     Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ??
                     throw new InvalidOperationException(), @"twux64.exe");
-                Process.Start(updateChecker, $"{UpdateUrl} /p:IxothPodFilterDownloader.exe,IxothPodFilterDownloader_Setup.exe");
+                var process = Process.Start(updateChecker, $"/f {UpdateUrl} /p:IxothPodFilterDownloader.exe,IxothPodFilterDownloader_Setup.exe");
                 toolStripMenuItemHelpUpdateApp.Enabled = true;
             }
         }
