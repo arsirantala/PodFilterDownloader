@@ -21,7 +21,8 @@ namespace IxothPodFilterDownloader
         private readonly FileIniDataParser _parser = new FileIniDataParser();
         readonly CancellationTokenSource _cts = new CancellationTokenSource();
         private FileSystemWatcher _fsw;
-
+        private readonly string UpdateUrl = "https://raw.githubusercontent.com/arsirantala/PodFilterDownloader/main/installer/IxothPodFilterDownloader_Setup.txt";
+        private readonly int MaxTimeInMSToWaitForUpdateCheck = 5000;
         public const string FilterDirectoryName = "filter";
 
         public frmMain()
@@ -235,12 +236,14 @@ namespace IxothPodFilterDownloader
             btnRemoveSelected.Text = Utils.GetLocalizedString("frmMain_btnRemove_Selected");
             btnMoreInfoOnSelectedFilter.Text = Utils.GetLocalizedString("frmMain_btnMore_Info_On_Selected_Filter");
             btnInstallSelected.Text = Utils.GetLocalizedString("frmMain_btnInstall_Selected");
+            lblToolUpdateAvailable.Text = Utils.GetLocalizedString("frmMain_Tool_update_available");
             btnDownloadUpdatedFilters.Text = Utils.GetLocalizedString("frmMain_btnDownload_updates");
             toolStripMenuItemFile.Text = Utils.GetLocalizedString("frmMain_File_Menu");
             toolStripMenuItemHelp.Text = Utils.GetLocalizedString("frmMain_Help_Menu");
             toolStripMenuItemFileFilterAdmin.Text = Utils.GetLocalizedString("frmMain_Filter_admin");
             toolStripMenuItemFileExit.Text = Utils.GetLocalizedString("frmMain_File_Exit_Menuitem");
             toolStripMenuItemHelpAbout.Text = Utils.GetLocalizedString("frmMain_About");
+            toolStripMenuItemHelpUpdateApp.Text = Utils.GetLocalizedString("frmMain_Update_app");
             toolStripMenuItemHelpVisitApplicationHomeWiki.Text =  Utils.GetLocalizedString("frmMain_Visit_application_home_repository_wiki_page");
             toolStripMenuItemHelpVisitApplicationHomeRepository.Text = Utils.GetLocalizedString("frmMain_Visit_application_home_repository_page");
 
@@ -252,6 +255,42 @@ namespace IxothPodFilterDownloader
             {
                 MessageBox.Show(Utils.GetLocalizedString("frmMain_This_application_requires_internet_connection_in_order_to_work"),
                     Utils.GetLocalizedString("frmMain_Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                // Check if to the application itself is updates available
+                string updateChecker = Path.Combine(
+                    Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ??
+                    throw new InvalidOperationException(), @"twux64.exe");
+
+                if (File.Exists(updateChecker))
+                {
+                    var process = Process.Start(updateChecker, $"/n /qb {UpdateUrl}");
+                    if (process != null)
+                    {
+                        process.WaitForExit(MaxTimeInMSToWaitForUpdateCheck);
+
+                        if (process.HasExited)
+                        {
+                            if (process.ExitCode == 1604)
+                            {
+                                lblToolUpdateAvailable.Visible = true;
+                            }
+                            else if (process.ExitCode == 1634)
+                            {
+                                lblToolUpdateAvailable.Visible = false;
+                            }
+                        }
+                        else
+                        {
+                            lblToolUpdateAvailable.Visible = false;
+                        }
+                    }
+                }
+                else
+                {
+                    lblToolUpdateAvailable.Visible = false;
+                }
             }
 
             RefreshContent();
@@ -463,6 +502,30 @@ namespace IxothPodFilterDownloader
             if (UpdateAndDownload.NetworkIsAvailable())
             {
                 Process.Start("https://github.com/arsirantala/PodFilterDownloader");
+            }
+        }
+
+        private void toolStripMenuItemHelp_DropDownOpening(object sender, EventArgs e)
+        {
+            string updateChecker = Path.Combine(
+                Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ??
+                throw new InvalidOperationException(), @"twux64.exe");
+            if (!File.Exists(updateChecker))
+            {
+                toolStripMenuItemHelpUpdateApp.Enabled = false;
+            }
+        }
+
+        private void toolStripMenuItemHelpUpdateApp_Click(object sender, EventArgs e)
+        {
+            if (UpdateAndDownload.NetworkIsAvailable())
+            {
+                toolStripMenuItemHelpUpdateApp.Enabled = false;
+                string updateChecker = Path.Combine(
+                    Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location) ??
+                    throw new InvalidOperationException(), @"twux64.exe");
+                Process.Start(updateChecker, $"{UpdateUrl} /p:IxothPodFilterDownloader.exe,IxothPodFilterDownloader_Setup.exe");
+                toolStripMenuItemHelpUpdateApp.Enabled = true;
             }
         }
     }

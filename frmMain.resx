@@ -786,4 +786,10 @@
   <data name="frmMain_Visit_application_home_repository_wiki_page" xml:space="preserve">
     <value>Visit application home repository wiki page...</value>
   </data>
+  <data name="frmMain_Update_app" xml:space="preserve">
+    <value>Update app...</value>
+  </data>
+  <data name="frmMain_Tool_update_available" xml:space="preserve">
+    <value>Tool update available</value>
+  </data>
 </root>

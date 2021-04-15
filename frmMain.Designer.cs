@@ -55,6 +55,8 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItemHelpVisitApplicationHomeRepository = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpVisitApplicationHomeWiki = new System.Windows.Forms.ToolStripMenuItem();
+            this.lblToolUpdateAvailable = new System.Windows.Forms.Label();
+            this.toolStripMenuItemHelpUpdateApp = new System.Windows.Forms.ToolStripMenuItem();
             this.gbOuter.SuspendLayout();
             this.gbPoDInstallLocation.SuspendLayout();
             this.gbInstalled_Available.SuspendLayout();
@@ -63,6 +65,7 @@
             // 
             // gbOuter
             // 
+            this.gbOuter.Controls.Add(this.lblToolUpdateAvailable);
             this.gbOuter.Controls.Add(this.xpProgressBar);
             this.gbOuter.Controls.Add(this.btnCancel);
             this.gbOuter.Controls.Add(this.btnRemoveSelected);
@@ -301,12 +304,14 @@
             // 
             this.toolStripMenuItemHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemHelpAbout,
+            this.toolStripMenuItemHelpUpdateApp,
             this.toolStripSeparator2,
             this.toolStripMenuItemHelpVisitApplicationHomeRepository,
             this.toolStripMenuItemHelpVisitApplicationHomeWiki});
             this.toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
             this.toolStripMenuItemHelp.Size = new System.Drawing.Size(55, 24);
             this.toolStripMenuItemHelp.Text = "Help";
+            this.toolStripMenuItemHelp.DropDownOpening += new System.EventHandler(this.toolStripMenuItemHelp_DropDownOpening);
             // 
             // toolStripMenuItemHelpAbout
             // 
@@ -333,6 +338,23 @@
             this.toolStripMenuItemHelpVisitApplicationHomeWiki.Size = new System.Drawing.Size(389, 26);
             this.toolStripMenuItemHelpVisitApplicationHomeWiki.Text = "Visit application home repository wiki page...";
             this.toolStripMenuItemHelpVisitApplicationHomeWiki.Click += new System.EventHandler(this.toolStripMenuItemHelpVisitApplicationHomeWiki_Click);
+            // 
+            // lblToolUpdateAvailable
+            // 
+            this.lblToolUpdateAvailable.ForeColor = System.Drawing.Color.LightCoral;
+            this.lblToolUpdateAvailable.Location = new System.Drawing.Point(822, 25);
+            this.lblToolUpdateAvailable.Name = "lblToolUpdateAvailable";
+            this.lblToolUpdateAvailable.Size = new System.Drawing.Size(150, 59);
+            this.lblToolUpdateAvailable.TabIndex = 12;
+            this.lblToolUpdateAvailable.Text = "Tool update available";
+            this.lblToolUpdateAvailable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // toolStripMenuItemHelpUpdateApp
+            // 
+            this.toolStripMenuItemHelpUpdateApp.Name = "toolStripMenuItemHelpUpdateApp";
+            this.toolStripMenuItemHelpUpdateApp.Size = new System.Drawing.Size(389, 26);
+            this.toolStripMenuItemHelpUpdateApp.Text = "Update app...";
+            this.toolStripMenuItemHelpUpdateApp.Click += new System.EventHandler(this.toolStripMenuItemHelpUpdateApp_Click);
             // 
             // frmMain
             // 
@@ -392,6 +414,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelpVisitApplicationHomeRepository;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelpVisitApplicationHomeWiki;
+        private System.Windows.Forms.Label lblToolUpdateAvailable;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelpUpdateApp;
     }
 }
 
