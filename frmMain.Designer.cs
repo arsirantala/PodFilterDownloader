@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.gbOuter = new System.Windows.Forms.GroupBox();
+            this.lblToolUpdateAvailable = new System.Windows.Forms.Label();
             this.xpProgressBar = new Framework.Controls.XpProgressBar();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnRemoveSelected = new System.Windows.Forms.Button();
@@ -52,11 +53,10 @@
             this.toolStripMenuItemFileExit = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemHelpUpdateApp = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItemHelpVisitApplicationHomeRepository = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelpVisitApplicationHomeWiki = new System.Windows.Forms.ToolStripMenuItem();
-            this.lblToolUpdateAvailable = new System.Windows.Forms.Label();
-            this.toolStripMenuItemHelpUpdateApp = new System.Windows.Forms.ToolStripMenuItem();
             this.gbOuter.SuspendLayout();
             this.gbPoDInstallLocation.SuspendLayout();
             this.gbInstalled_Available.SuspendLayout();
@@ -84,6 +84,17 @@
             this.gbOuter.TabIndex = 1;
             this.gbOuter.TabStop = false;
             this.gbOuter.Text = "Click on button to download PoD filter";
+            // 
+            // lblToolUpdateAvailable
+            // 
+            this.lblToolUpdateAvailable.ForeColor = System.Drawing.Color.LightCoral;
+            this.lblToolUpdateAvailable.Location = new System.Drawing.Point(822, 25);
+            this.lblToolUpdateAvailable.Name = "lblToolUpdateAvailable";
+            this.lblToolUpdateAvailable.Size = new System.Drawing.Size(150, 59);
+            this.lblToolUpdateAvailable.TabIndex = 12;
+            this.lblToolUpdateAvailable.Text = "Tool update available";
+            this.lblToolUpdateAvailable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblToolUpdateAvailable.Visible = false;
             // 
             // xpProgressBar
             // 
@@ -320,6 +331,13 @@
             this.toolStripMenuItemHelpAbout.Text = "About...";
             this.toolStripMenuItemHelpAbout.Click += new System.EventHandler(this.toolStripMenuItemHelpAbout_Click);
             // 
+            // toolStripMenuItemHelpUpdateApp
+            // 
+            this.toolStripMenuItemHelpUpdateApp.Name = "toolStripMenuItemHelpUpdateApp";
+            this.toolStripMenuItemHelpUpdateApp.Size = new System.Drawing.Size(389, 26);
+            this.toolStripMenuItemHelpUpdateApp.Text = "Update app...";
+            this.toolStripMenuItemHelpUpdateApp.Click += new System.EventHandler(this.toolStripMenuItemHelpUpdateApp_Click);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
@@ -338,23 +356,6 @@
             this.toolStripMenuItemHelpVisitApplicationHomeWiki.Size = new System.Drawing.Size(389, 26);
             this.toolStripMenuItemHelpVisitApplicationHomeWiki.Text = "Visit application home repository wiki page...";
             this.toolStripMenuItemHelpVisitApplicationHomeWiki.Click += new System.EventHandler(this.toolStripMenuItemHelpVisitApplicationHomeWiki_Click);
-            // 
-            // lblToolUpdateAvailable
-            // 
-            this.lblToolUpdateAvailable.ForeColor = System.Drawing.Color.LightCoral;
-            this.lblToolUpdateAvailable.Location = new System.Drawing.Point(822, 25);
-            this.lblToolUpdateAvailable.Name = "lblToolUpdateAvailable";
-            this.lblToolUpdateAvailable.Size = new System.Drawing.Size(150, 59);
-            this.lblToolUpdateAvailable.TabIndex = 12;
-            this.lblToolUpdateAvailable.Text = "Tool update available";
-            this.lblToolUpdateAvailable.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // toolStripMenuItemHelpUpdateApp
-            // 
-            this.toolStripMenuItemHelpUpdateApp.Name = "toolStripMenuItemHelpUpdateApp";
-            this.toolStripMenuItemHelpUpdateApp.Size = new System.Drawing.Size(389, 26);
-            this.toolStripMenuItemHelpUpdateApp.Text = "Update app...";
-            this.toolStripMenuItemHelpUpdateApp.Click += new System.EventHandler(this.toolStripMenuItemHelpUpdateApp_Click);
             // 
             // frmMain
             // 
